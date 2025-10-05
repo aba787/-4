@@ -1,0 +1,17 @@
+[agent]
+expertMode = true
+
+[nix]
+packages = ["unzipNLS"]
+
+[workflows]
+runButton = "Start Web Server"
+
+[[workflows.workflow]]
+name = "Start Web Server"
+author = 46282751
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "static-web-server --config-file .config/static-web-server.toml"
