@@ -14,4 +14,4 @@ mode = "sequential"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "static-web-server --config-file .config/static-web-server.toml"
+args = "python -m http.server 5000"
