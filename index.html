@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>منصة مُمكّن</title>
+
+  <!-- ✅ الخط -->
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+
+  <!-- ✅ ملف CSS -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ✅ الشريط العلوي -->
+  <header class="topbar">
+    <nav class="navbar">
+      <div class="nav-links">
+        <a href="index.html">الرئيسية</a>
+        <a href="support.html">الدعم الفني</a>
+      </div>
+      <a href="login.html" id="loginLink" class="btn login-btn">تسجيل الدخول</a>
+    </nav>
+  </header>
+
+  <!-- ✅ المقدمة -->
+  <section class="hero">
+    <div class="hero-overlay">
+      <h1>تطوعك ليس فقط خدمة</h1>
+      <p>هو استثمار في مجتمع أفضل</p>
+      <a href="register.html" class="btn hero-btn">تطوع الآن</a>
+    </div>
+  </section>
+
+  <!-- ✅ Firebase -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    // إعدادات Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyAlMibtDbLAZLMhhJNho5Sih_qBfWxZyXI",
+      authDomain: "momaken-45ba9.firebaseapp.com",
+      projectId: "momaken-45ba9",
+      storageBucket: "momaken-45ba9.appspot.com",
+      messagingSenderId: "638133555280",
+      appId: "1:638133555280:web:c84bd87c15cabe55d30155",
+      measurementId: "G-RW3TJ2S0PL"
+    };
+
+    // تهيئة التطبيق
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // متابعة حالة تسجيل الدخول
+    onAuthStateChanged(auth, (user) => {
+      const loginLink = document.getElementById("loginLink");
+
+      if (user) {
+        // ✅ المستخدم مسجل دخول
+        if (loginLink) {
+          loginLink.textContent = "تسجيل الخروج";
+          loginLink.href = "#";
+          loginLink.addEventListener("click", async (e) => {
+            e.preventDefault();
+            await signOut(auth);
+            window.location.reload();
+          });
+        }
+      } else {
+        // ✅ المستخدم غير مسجل دخول
+        if (loginLink) {
+          loginLink.textContent = "تسجيل الدخول";
+          loginLink.href = "login.html";
+        }
+      }
+    });
+  </script>
+
+  <!-- ✅ سكربت إضافي -->
+  <script src="script.js" defer></script>
+</body>
+</html>

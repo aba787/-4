@@ -1,0 +1,155 @@
+from pathlib import Path
+
+html_code = """
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>تسجيل جمعية</title>
+  <style>
+    body {
+      font-family: 'Cairo', sans-serif;
+      background: #f9f9f9;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 400px;
+      margin: 40px auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      color: #008060;
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+    button {
+      width: 100%;
+      background: #008060;
+      color: #fff;
+      border: none;
+      padding: 12px;
+      margin-top: 20px;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    #error {
+      color: red;
+      margin-top: 10px;
+      text-align: center;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>تسجيل جمعية</h2>
+    <form id="associationForm">
+      <label>اسم الجمعية</label>
+      <input type="text" id="name" required />
+
+      <label>البريد الإلكتروني</label>
+      <input type="email" id="email" required />
+
+      <label>كلمة المرور</label>
+      <input type="password" id="password" required />
+
+      <label>تأكيد كلمة المرور</label>
+      <input type="password" id="confirmPassword" required />
+
+      <label>المنطقة</label>
+      <select id="region" required>
+        <option value="">اختر المنطقة</option>
+        <option value="الرياض">الرياض</option>
+        <option value="جدة">جدة</option>
+        <option value="مكة">مكة</option>
+        <option value="المدينة">المدينة</option>
+        <option value="الشرقية">المنطقة الشرقية</option>
+      </select>
+
+      <label>وصف الجمعية</label>
+      <textarea id="description" rows="3" required></textarea>
+
+      <div id="error">حدث خطأ</div>
+      <button type="submit">تسجيل</button>
+    </form>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAlMibtDbLAZLMhhJNho5Sih_qBfWxZyXI",
+      authDomain: "momaken-45ba9.firebaseapp.com",
+      projectId: "momaken-45ba9",
+      storageBucket: "momaken-45ba9.appspot.com",
+      messagingSenderId: "638133555280",
+      appId: "1:638133555280:web:c84bd87c15cabe55d30155"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const form = document.getElementById("associationForm");
+    const errorDiv = document.getElementById("error");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      errorDiv.style.display = "none";
+
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const confirmPassword = document.getElementById("confirmPassword").value.trim();
+      const region = document.getElementById("region").value.trim();
+      const description = document.getElementById("description").value.trim();
+
+      if (password !== confirmPassword || password.length < 6) {
+        errorDiv.textContent = "تأكد من كلمة المرور.";
+        errorDiv.style.display = "block";
+        return;
+      }
+
+      try {
+        const cred = await createUserWithEmailAndPassword(auth, email, password);
+        await setDoc(doc(db, "associations", cred.user.uid), {
+          name,
+          email,
+          region,
+          description,
+          createdAt: serverTimestamp()
+        });
+        window.location.href = "admin-opportunities.html";
+      } catch (err) {
+        errorDiv.textContent = "خطأ: " + err.message;
+        errorDiv.style.display = "block";
+      }
+    });
+  </script>
+</body>
+</html>
+"""
+
+path = Path("/mnt/data/register-association.html")
+path.write_text(html_code, encoding="utf-8")
+path.name

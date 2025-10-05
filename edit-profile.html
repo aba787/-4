@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ملفي الشخصي</title>
+<style>
+body {
+  font-family: 'Cairo', sans-serif;
+  background: #f5f7fa;
+  margin: 0;
+  padding: 0;
+}
+.profile-container {
+  max-width: 900px;
+  margin: 40px auto;
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.profile-card, .settings-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  flex: 1;
+  min-width: 280px;
+}
+.profile-card img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  margin: 0 auto 15px;
+}
+.profile-card h2 {
+  text-align: center;
+  margin-bottom: 10px;
+  color: #333;
+}
+.profile-info p {
+  margin: 8px 0;
+  color: #555;
+  font-size: 16px;
+}
+.profile-info p span { font-weight: bold; color: #333; }
+.settings-card button {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 10px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  color: #fff;
+  transition: 0.3s;
+}
+.settings-card button.edit { background: #008080; }
+.settings-card button.edit:hover { background: #006666; }
+.settings-card button.logout { background: #e74c3c; }
+.settings-card button.logout:hover { background: #c0392b; }
+.settings-card button.help { background: #3498db; }
+.settings-card button.support { background: #9b59b6; }
+
+.bottom-nav {
+  position: fixed;
+  bottom:0;
+  right:0;
+  left:0;
+  background:#fff;
+  border-top:1px solid #ddd;
+  display:flex;
+  justify-content:space-around;
+  padding:10px 0;
+}
+.bottom-nav a {
+  text-decoration:none;
+  color:#888;
+  font-size:24px;
+  transition:color 0.2s;
+}
+.bottom-nav a:hover { color:#000; }
+.bottom-nav a.active { color:#2196f3; font-weight:bold; }
+</style>
+</head>
+<body>
+
+<div class="profile-container">
+  <div class="profile-card" id="profileCard">
+    <h2>جارٍ تحميل بياناتك...</h2>
+  </div>
+
+  <div class="settings-card">
+    <!-- زر تعديل الملف الشخصي -->
+    <button class="edit" onclick="window.location.href='profile2.html'">✏️ تعديل الملف الشخصي</button>
+
+    <!-- زر المساعدة -->
+    <button class="help" onclick="window.location.href='help.html'">❓ المساعدة</button>
+
+    <!-- زر الإعدادات -->
+    <button class="settings" onclick="window.location.href='settings.html'">⚙️ الإعدادات</button>
+  </div>
+
+
+<footer class="bottom-nav">
+  <a href="opportunities.html">🏠</a>
+  <a href="favorites.html">❤️</a>
+  <a href="chat.html">💬</a>
+  <a href="my-requests.html" class="active">📝</a>
+  <a href="edit-profile.html">👤</a>
+</footer>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAlMibtDbLAZLMhhJNho5Sih_qBfWxZyXI",
+  authDomain: "momaken-45ba9.firebaseapp.com",
+  projectId: "momaken-45ba9",
+  storageBucket: "momaken-45ba9.appspot.com",
+  messagingSenderId: "638133555280",
+  appId: "1:638133555280:web:c84bd87c15cabe55d30155"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const profileCard = document.getElementById("profileCard");
+
+// تحميل بيانات المستخدم
+onAuthStateChanged(auth, async (user) => {
+  if (!user) return window.location.href = "login.html";
+
+  try {
+    const profileRef = doc(db, "users", user.uid);
+    const profileSnap = await getDoc(profileRef);
+    const profileData = profileSnap.exists() ? profileSnap.data() : {};
+
+    profileCard.innerHTML = `
+      <img src="${profileData.photoURL || 'https://i.pravatar.cc/150?u='+user.uid}" alt="صورة المستخدم">
+      <h2>${profileData.name || user.displayName || "لم يتم ضبط الاسم"}</h2>
+      <div class="profile-info">
+        <p><span>📧 البريد:</span> ${user.email}</p>
+        <p><span>🎂 العمر:</span> ${profileData.age || "غير محدد"}</p>
+        <p><span>📍 المنطقة:</span> ${profileData.region || "غير محدد"}</p>
+        <p><span>🏷️ الاهتمامات:</span> ${(profileData.interests || []).join("، ") || "غير محدد"}</p>
+        <p><span>💼 الوظيفة / الخدمة:</span> ${profileData.job || "غير محددة"}</p>
+        <p><span>📄 السيرة الذاتية:</span> ${profileData.cv ? `<a href="${profileData.cv}" target="_blank">عرض / تحميل</a>` : "لم يتم رفعها"}</p>
+        <p><span>🎓 المؤهل التعليمي:</span> ${profileData.education || "غير محدد"}</p>
+        <p><span>💪 سبق التطوع؟</span> ${profileData.volunteeredBefore === true ? "نعم" : profileData.volunteeredBefore === false ? "لا" : "غير محدد"}</p>
+      </div>
+    `;
+});
+
+// أزرار التحكم
+document.getElementById("editBtn").onclick = () => window.location.href = "profile2.html";
+document.getElementById("logoutBtn").onclick = () => signOut(auth)
+  .then(() => window.location.href = "login.html")
+  .catch(err => console.error("خطأ أثناء تسجيل الخروج:", err));
+
+</script>
+</body>
+</html>

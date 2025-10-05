@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>إدارة الفرص التطوعية</title>
+<style>
+body { font-family:'Cairo',sans-serif; background:#f5f7fa; padding:20px; }
+h1 { text-align:center; color:#004d40; }
+.container { max-width: 800px; margin:auto; }
+form, .opportunity-card { background:#fff; padding:20px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.1); margin-bottom:20px; }
+form label { display:block; margin-top:10px; font-weight:bold; }
+form input, form select, form textarea, form button { width:100%; padding:10px; margin-top:5px; border-radius:6px; border:1px solid #ccc; }
+form button { background:#004d40; color:#fff; border:none; cursor:pointer; margin-top:15px; }
+form button:hover { background:#00695c; }
+.opportunity-card h3 { margin:0; color:#333; }
+.opportunity-card p { margin:5px 0; }
+.opportunity-card button { background:red; color:white; border:none; padding:6px 12px; border-radius:6px; cursor:pointer; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>إدارة الفرص التطوعية</h1>
+
+  <form id="opportunityForm">
+    <label>عنوان الفرصة</label>
+    <input type="text" id="title" required>
+
+    <label>الوصف</label>
+    <textarea id="description" rows="4" required></textarea>
+
+    <label>المنطقة</label>
+    <select id="region" required>
+      <option value="">اختر المنطقة</option>
+      <option value="الرياض">الرياض</option>
+      <option value="جدة">جدة</option>
+      <option value="الدمام">الدمام</option>
+      <option value="مكة">مكة</option>
+      <option value="المدينة">المدينة</option>
+    </select>
+
+    <label>الفئة</label>
+    <select id="category" required>
+      <option value="">اختر الفئة</option>
+      <option value="تعليم">تعليم</option>
+      <option value="صحة">صحة</option>
+      <option value="بيئة">بيئة</option>
+      <option value="اجتماعي">اجتماعي</option>
+    </select>
+
+    <button type="submit">إضافة الفرصة</button>
+  </form>
+
+  <div id="opportunitiesList"></div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAlMibtDbLAZLMhhJNho5Sih_qBfWxZyXI",
+  authDomain: "momaken-45ba9.firebaseapp.com",
+  projectId: "momaken-45ba9",
+  storageBucket: "momaken-45ba9.appspot.com",
+  messagingSenderId: "638133555280",
+  appId: "1:638133555280:web:c84bd87c15cabe55d30155"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) return window.location.href = "login-association.html";
+  await loadOpportunities();
+});
+
+document.getElementById("opportunityForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const title = document.getElementById("title").value.trim();
+  const description = document.getElementById("description").value.trim();
+  const region = document.getElementById("region").value;
+  const category = document.getElementById("category").value;
+
+  if(!title || !description || !region || !category) return alert("يرجى تعبئة جميع الحقول");
+
+  try {
+    await addDoc(collection(db, "opportunities"), {
+      title, description, region, category, createdAt: serverTimestamp(), associationId: auth.currentUser.uid
+    });
+    alert("تم إضافة الفرصة بنجاح");
+    document.getElementById("opportunityForm").reset();
+    await loadOpportunities();
+  } catch (err) {
+    alert("خطأ: " + err.message);
+  }
+});
+
+async function loadOpportunities() {
+  const snapshot = await getDocs(collection(db, "opportunities"));
+  const container = document.getElementById("opportunitiesList");
+  container.innerHTML = "";
+  if(snapshot.empty) return container.innerHTML="<p>لا توجد فرص حالياً</p>";
+
+  snapshot.forEach(docSnap => {
+    const data = docSnap.data();
+    const card = document.createElement("div");
+    card.className="opportunity-card";
+    card.innerHTML = `
+      <h3>${data.title}</h3>
+      <p>${data.description}</p>
+      <p><strong>المنطقة:</strong> ${data.region}</p>
+      <p><strong>الفئة:</strong> ${data.category}</p>
+      <button onclick="deleteOpportunity('${docSnap.id}')">حذف</button>
+    `;
+    container.appendChild(card);
+  });
+}
+
+window.deleteOpportunity = async id => {
+  if(!confirm("هل أنت متأكد؟")) return;
+  try { await deleteDoc(doc(db,"opportunities",id)); await loadOpportunities(); } 
+  catch(err){ alert("خطأ: "+err.message); }
+}
+</script>
+</body>
+</html>

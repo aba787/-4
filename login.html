@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>تسجيل الدخول - منصة مُمكّن</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      font-family: 'Cairo', sans-serif;
+      background: #eaf4ec;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .login-container {
+      max-width: 400px;
+      width: 100%;
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #2e7d32;
+      margin-bottom: 20px;
+    }
+    .form-group { margin-bottom: 20px; }
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: #333;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+    .btn-submit {
+      width: 100%;
+      padding: 12px;
+      background-color: #2e7d32;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .btn-submit:hover { background-color: #1b5e20; }
+    .error { color: #f44336; margin-top: 10px; display: none; text-align: center; }
+    .links { text-align: center; margin-top: 20px; }
+    .links a {
+      color: #2e7d32;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .links a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <h1>تسجيل الدخول</h1>
+
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="email">البريد الإلكتروني</label>
+        <input type="email" id="email" required />
+      </div>
+
+      <div class="form-group">
+        <label for="password">كلمة المرور</label>
+        <input type="password" id="password" required />
+      </div>
+
+      <button type="submit" class="btn-submit">دخول</button>
+      <div id="error" class="error"></div>
+    </form>
+
+    <div class="links">
+      <p><a href="register.html">إنشاء حساب جديد</a></p>
+      <p><a href="login-association.html">دخول الجمعيات</a></p>
+      <p><a href="index.html">العودة للرئيسية</a></p>
+    </div>
+  </div>
+
+  <!-- ✅ Firebase تسجيل الدخول -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    // 🔧 إعدادات Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyAlMibtDbLAZLMhhJNho5Sih_qBfWxZyXI",
+      authDomain: "momaken-45ba9.firebaseapp.com",
+      projectId: "momaken-45ba9",
+      storageBucket: "momaken-45ba9.appspot.com",
+      messagingSenderId: "638133555280",
+      appId: "1:638133555280:web:c84bd87c15cabe55d30155"
+    };
+
+    // 🚀 تهيئة
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // 🎯 تسجيل الدخول
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const errorDiv = document.getElementById("error");
+
+      errorDiv.style.display = "none";
+
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        window.location.href = "profile.html"; // ↩️ بعد تسجيل الدخول
+      } catch (error) {
+        switch (error.code) {
+          case 'auth/user-not-found':
+            errorDiv.textContent = "لا يوجد حساب بهذا البريد.";
+            break;
+          case 'auth/wrong-password':
+            errorDiv.textContent = "كلمة المرور غير صحيحة.";
+            break;
+          case 'auth/invalid-email':
+            errorDiv.textContent = "البريد الإلكتروني غير صالح.";
+            break;
+          case 'auth/too-many-requests':
+            errorDiv.textContent = "تم حظر الحساب مؤقتًا بسبب محاولات فاشلة.";
+            break;
+          default:
+            errorDiv.textContent = "حدث خطأ: " + error.message;
+        }
+        errorDiv.style.display = "block";
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تعديل الملف الشخصي</title>
+<style>
+body { font-family: 'Cairo', sans-serif; background: #f5f7fa; margin:0; padding:0; }
+.container { max-width: 600px; margin: 40px auto; background:#fff; border-radius:12px; padding:20px; box-shadow:0 4px 12px rgba(0,0,0,0.05);}
+.container h2 { text-align:center; margin-bottom:20px; }
+.container label { display:block; margin-top:10px; font-weight:bold; }
+.container input, .container select, .container textarea { width:100%; padding:10px; margin-top:5px; border-radius:6px; border:1px solid #ccc; }
+.container button { margin-top:20px; width:100%; padding:12px; border:none; border-radius:8px; background:#008080; color:#fff; cursor:pointer; font-size:16px; }
+.container button:hover { background:#006666; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h2>تعديل الملف الشخصي</h2>
+  <label>الاسم</label>
+  <input type="text" id="name" placeholder="ادخل الاسم">
+
+  <label>العمر</label>
+  <input type="number" id="age" placeholder="ادخل العمر">
+
+  <label>المنطقة</label>
+  <input type="text" id="region" placeholder="ادخل المنطقة">
+
+  <label>الاهتمامات (افصل بينهم بفاصلة)</label>
+  <input type="text" id="interests" placeholder="مثال: تصميم، برمجة">
+
+  <label>الوظيفة / الخدمة</label>
+  <input type="text" id="job" placeholder="ادخل الوظيفة أو الخدمة">
+
+  <label>المؤهل التعليمي</label>
+  <input type="text" id="education" placeholder="ادخل المؤهل">
+
+  <label>سبق التطوع؟</label>
+  <select id="volunteeredBefore">
+    <option value="">اختر</option>
+    <option value="true">نعم</option>
+    <option value="false">لا</option>
+  </select>
+
+  <label>رابط السيرة الذاتية</label>
+  <input type="text" id="cv" placeholder="رابط ملف PDF">
+
+  <label>صورة الملف الشخصي (رابط)</label>
+  <input type="text" id="photoURL" placeholder="رابط الصورة">
+
+  <button id="saveBtn">💾 حفظ التعديلات</button>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+// إعداد Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyAlMibtDbLAZLMhhJNho5Sih_qBfWxZyXI",
+  authDomain: "momaken-45ba9.firebaseapp.com",
+  projectId: "momaken-45ba9",
+  storageBucket: "momaken-45ba9.appspot.com",
+  messagingSenderId: "638133555280",
+  appId: "1:638133555280:web:c84bd87c15cabe55d30155"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// عناصر الصفحة
+const nameInput = document.getElementById("name");
+const ageInput = document.getElementById("age");
+const regionInput = document.getElementById("region");
+const interestsInput = document.getElementById("interests");
+const jobInput = document.getElementById("job");
+const educationInput = document.getElementById("education");
+const volunteeredBeforeSelect = document.getElementById("volunteeredBefore");
+const cvInput = document.getElementById("cv");
+const photoURLInput = document.getElementById("photoURL");
+const saveBtn = document.getElementById("saveBtn");
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) return window.location.href="login.html";
+
+  const userRef = doc(db, "users", user.uid);
+  const userSnap = await getDoc(userRef);
+  const data = userSnap.exists() ? userSnap.data() : {};
+
+  // تعبئة الحقول
+  nameInput.value = data.name || "";
+  ageInput.value = data.age || "";
+  regionInput.value = data.region || "";
+  interestsInput.value = (data.interests || []).join(",");
+  jobInput.value = data.job || "";
+  educationInput.value = data.education || "";
+  volunteeredBeforeSelect.value = data.volunteeredBefore === true ? "true" : data.volunteeredBefore === false ? "false" : "";
+  cvInput.value = data.cv || "";
+  photoURLInput.value = data.photoURL || "";
+
+  // حفظ التعديلات
+  saveBtn.onclick = async () => {
+    await setDoc(userRef, {
+      name: nameInput.value,
+      age: ageInput.value,
+      region: regionInput.value,
+      interests: interestsInput.value.split(",").map(i => i.trim()),
+      job: jobInput.value,
+      education: educationInput.value,
+      volunteeredBefore: volunteeredBeforeSelect.value === "true" ? true : volunteeredBeforeSelect.value === "false" ? false : null,
+      cv: cvInput.value,
+      photoURL: photoURLInput.value
+    }, { merge: true });
+    alert("✅ تم حفظ التعديلات بنجاح!");
+    window.location.href="profile.html"; // العودة للملف الشخصي الأساسي
+  };
+});
+</script>
+</body>
+</html>

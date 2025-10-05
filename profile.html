@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>الملف الشخصي - مُمكّن</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
+    body {
+      background: #eaf4ec;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .wrapper {
+      width: 100%;
+      max-width: 500px;
+      background: #fff;
+      padding: 30px 25px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.05);
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #2e7d32;
+    }
+    label {
+      display: block;
+      margin-bottom: 6px;
+      color: #444;
+      font-weight: 600;
+    }
+    input[type="text"],
+    input[type="email"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 20px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 15px;
+    }
+    textarea { resize: vertical; }
+    .interests-group {
+      margin-bottom: 20px;
+    }
+    .interests-group label {
+      font-weight: normal;
+      display: inline-block;
+      margin-right: 10px;
+    }
+    .btn {
+      width: 100%;
+      padding: 12px;
+      background-color: #2e7d32;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .btn:hover {
+      background-color: #256728;
+    }
+    .profile-image {
+      display: block;
+      margin: 0 auto 15px;
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 2px solid #ccc;
+    }
+  </style>
+</head>
+  <body>
+    <div class="wrapper">
+      <h1>الملف الشخصي</h1>
+      <img id="profileImg" class="profile-image" src="https://via.placeholder.com/120" alt="الصورة الشخصية" />
+      <input type="file" id="imageUpload" accept="image/*" />
+
+      <form id="profile-form">
+        <label for="name">الاسم الكامل:</label>
+        <input type="text" id="name" required />
+
+        <label for="gender">الجنس:</label>
+        <select id="gender" required>
+          <option value="">-- اختر --</option>
+          <option value="ذكر">ذكر</option>
+          <option value="أنثى">أنثى</option>
+        </select>
+
+        <label>اختر اهتماماتك:</label>
+        <div class="interests-group">
+          <label><input type="checkbox" name="interest" value="الصحة"> الصحة</label>
+          <label><input type="checkbox" name="interest" value="التعليم"> التعليم</label>
+          <label><input type="checkbox" name="interest" value="البيئة"> البيئة</label>
+          <label><input type="checkbox" name="interest" value="التقنية"> التقنية</label>
+          <label><input type="checkbox" name="interest" value="الرياضة"> الرياضة</label>
+        </div>
+
+        <label for="bio">نبذة عنك:</label>
+        <textarea id="bio" rows="4" placeholder="اكتب شيئًا عن نفسك..."></textarea>
+
+        <button type="submit" class="btn" id="saveBtn" disabled>حفظ</button>
+      </form>
+    </div>
+
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+      import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+      import {
+        getFirestore,
+        doc,
+        getDoc,
+        setDoc,
+        serverTimestamp
+      } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+      import {
+        getStorage,
+        ref,
+        uploadBytes,
+        getDownloadURL
+      } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyAlMibtDbLAZLMhhJNho5Sih_qBfWxZyXI",
+        authDomain: "momaken-45ba9.firebaseapp.com",
+        projectId: "momaken-45ba9",
+        storageBucket: "momaken-45ba9.appspot.com",
+        messagingSenderId: "638133555280",
+        appId: "1:638133555280:web:c84bd87c15cabe55d30155"
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth();
+      const db = getFirestore();
+      const storage = getStorage();
+
+      let currentUser;
+      let selectedImageFile = null;
+
+      const profileImg = document.getElementById("profileImg");
+      const imageUpload = document.getElementById("imageUpload");
+      const saveBtn = document.getElementById("saveBtn");
+
+      onAuthStateChanged(auth, async (user) => {
+        if (!user) return window.location.href = "login.html";
+
+        currentUser = user;
+        saveBtn.disabled = false;
+
+        await loadUserData();
+      });
+
+      async function loadUserData() {
+        try {
+          const userRef = doc(db, "users", currentUser.uid);
+          const docSnap = await getDoc(userRef);
+
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            document.getElementById("name").value = data.name || "";
+            document.getElementById("gender").value = data.gender || "";
+            document.getElementById("bio").value = data.bio || "";
+            profileImg.src = data.imagePreviewUrl || "https://via.placeholder.com/120";
+
+            (data.interests || []).forEach(val => {
+              const checkbox = document.querySelector(`input[value="${val}"]`);
+              if (checkbox) checkbox.checked = true;
+            });
+          }
+        } catch (err) {
+          console.error("Error loading profile:", err);
+        }
+      }
+
+      imageUpload.addEventListener("change", (e) => {
+        selectedImageFile = e.target.files[0];
+        if (selectedImageFile) {
+          const reader = new FileReader();
+          reader.onload = () => {
+            profileImg.src = reader.result;
+          };
+          reader.readAsDataURL(selectedImageFile);
+        }
+      });
+
+      document.getElementById("profile-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        if (!currentUser) {
+          alert("⚠️ لم يتم تحميل المستخدم.");
+          return;
+        }
+
+        const name = document.getElementById("name").value.trim();
+        const gender = document.getElementById("gender").value;
+        const bio = document.getElementById("bio").value.trim();
+        const interests = Array.from(document.querySelectorAll('input[name="interest"]:checked')).map(cb => cb.value);
+
+        if (interests.length === 0) {
+          alert("⚠️ يرجى اختيار اهتمام واحد على الأقل.");
+          return;
+        }
+
+        saveBtn.textContent = "⏳ جاري الحفظ...";
+        saveBtn.disabled = true;
+
+        let imageUrl = profileImg.src;
+
+        try {
+          if (selectedImageFile) {
+            const storageRef = ref(storage, `users/${currentUser.uid}/profile.jpg`);
+            await uploadBytes(storageRef, selectedImageFile);
+            imageUrl = await getDownloadURL(storageRef);
+          }
+
+          const userRef = doc(db, "users", currentUser.uid);
+          await setDoc(userRef, {
+            name,
+            gender,
+            bio,
+            interests,
+            imagePreviewUrl: imageUrl,
+            updatedAt: serverTimestamp()
+          }, { merge: true });
+
+          saveBtn.textContent = "✅ تم الحفظ";
+          window.location.href = "qualifications.html";
+        } catch (err) {
+          alert("❌ حدث خطأ أثناء الحفظ: " + err.message);
+          console.error(err);
+          saveBtn.textContent = "حفظ";
+          saveBtn.disabled = false;
+        }
+      });
+    </script>
+  </body>

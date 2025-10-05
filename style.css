@@ -1,0 +1,117 @@
+
+/* ---------------- index ---------------- */
+body {
+  margin: 0;
+  font-family: 'Tajawal', 'Cairo', sans-serif;
+  background-color: #ffffff;
+  color: #333333;
+}
+
+/* ---------------- شريط التنقل ---------------- */
+.topbar {
+  background-color: #2e7d32;
+  color: #fff;
+  padding: 15px 0;
+}
+
+.navbar {
+  width: 90%;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-links a {
+  color: #fff;
+  margin-left: 20px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+  color: #66bb6a;
+}
+
+.btn-volunteer {
+  display: inline-block;
+  background-color: #2e7d32;
+  color: white;
+  font-weight: bold;
+  padding: 12px 25px;
+  border-radius: 50px;
+  font-size: 16px;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+.btn-volunteer:hover {
+  background-color: #1b5e20;
+}
+
+.btn.login-btn {
+  background-color: #66bb6a;
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.btn.login-btn:hover {
+  background-color: #43a047;
+}
+
+/* ---------------- قسم الهيرو ---------------- */
+.hero {
+  position: relative;
+  background-image: url('https://i.postimg.cc/kMVvp5nR/IMG-1698.jpg'); /* غيّريه حسب الخلفية عندك */
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-overlay {
+  background-color: transparent; /* ← إزالة المربع */
+  padding: 0;
+  text-align: center;
+  color: #fff;
+  max-width: 100%;
+}
+
+
+
+.hero-overlay h1 {
+  font-size: 28px;
+  margin-bottom: 20px;
+  color: #fff;
+}
+
+.hero-overlay p {
+  font-size: 18px;
+  margin-bottom: 30px;
+}
+
+.btn.hero-btn {
+  background-color: #2e7d32;
+  color: #fff;
+  padding: 12px 25px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.btn.hero-btn:hover {
+  background-color: #1b5e20;
+}
+
+
+/* ---------------- تسجيل دخوال ---------------- */
+
+  /* نفس التنسيق اللي انت حاطه */
+

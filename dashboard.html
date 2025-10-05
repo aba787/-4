@@ -1,0 +1,130 @@
+from pathlib import Path
+
+dashboard_html = """
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>لوحة التحكم</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: 'Cairo', sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      color: #004d40;
+    }
+    .dashboard {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .card {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 20px;
+      flex: 1 1 250px;
+    }
+    .card h2 {
+      margin: 0;
+      font-size: 22px;
+      color: #333;
+    }
+    .card p {
+      font-size: 28px;
+      font-weight: bold;
+      color: #00796b;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>لوحة التحكم</h1>
+  <div class="dashboard">
+    <div class="card">
+      <h2>عدد الجمعيات</h2>
+      <p id="assocCount">--</p>
+    </div>
+    <div class="card">
+      <h2>عدد الفرص</h2>
+      <p id="oppsCount">--</p>
+    </div>
+    <div class="card">
+      <h2>عدد المتطوعين</h2>
+      <p id="usersCount">--</p>
+    </div>
+    <div class="card">
+      <h2>عدد الطلبات</h2>
+      <p id="reqsCount">--</p>
+    </div>
+    <div class="card">
+      <h2>المعلقة / المقبولة / المرفوضة</h2>
+      <p id="statusBreakdown">--</p>
+    </div>
+    <div class="card">
+      <h2>إشعارات اليوم</h2>
+      <p id="notiToday">--</p>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFirestore, collection, getDocs, query, where, Timestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAlMibtDbLAZLMhhJNho5Sih_qBfWxZyXI",
+      authDomain: "momaken-45ba9.firebaseapp.com",
+      projectId: "momaken-45ba9",
+      storageBucket: "momaken-45ba9.appspot.com",
+      messagingSenderId: "638133555280",
+      appId: "1:638133555280:web:c84bd87c15cabe55d30155"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth();
+    const db = getFirestore();
+
+    onAuthStateChanged(auth, async user => {
+      if (!user) return window.location.href = "login.html";
+
+      const isAdmin = user.email === "admin@email.com";
+      const uid = user.uid;
+
+      const [assocSnap, oppSnap, usersSnap, reqSnap, notiSnap] = await Promise.all([
+        getDocs(collection(db, "associations")),
+        getDocs(collection(db, "opportunities")),
+        getDocs(collection(db, "users")),
+        getDocs(collection(db, "requests")),
+        getDocs(query(collection(db, "notifications"), where("createdAt", ">=", Timestamp.fromDate(new Date(new Date().setHours(0,0,0,0))))))
+      ]);
+
+      document.getElementById("assocCount").textContent = assocSnap.size;
+      document.getElementById("oppsCount").textContent = oppSnap.size;
+      document.getElementById("usersCount").textContent = usersSnap.size;
+      document.getElementById("reqsCount").textContent = reqSnap.size;
+      document.getElementById("notiToday").textContent = notiSnap.size;
+
+      let pending = 0, accepted = 0, rejected = 0;
+      reqSnap.forEach(doc => {
+        const status = doc.data().status;
+        if (status === "معلق") pending++;
+        else if (status === "مقبول") accepted++;
+        else if (status === "مرفوض") rejected++;
+      });
+      document.getElementById("statusBreakdown").textContent = `${pending} / ${accepted} / ${rejected}`;
+    });
+  </script>
+
+</body>
+</html>
+"""
+
+file_path = Path("/mnt/data/dashboard.html")
+file_path.write_text(dashboard_html, encoding="utf-8")
+file_path.name

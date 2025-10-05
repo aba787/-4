@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>الأسئلة الشائعة - تعليمات</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <style>
+    body {
+      font-family: 'Cairo', sans-serif;
+      background-color: #f9f9f9;
+      padding: 20px;
+      margin: 0;
+      line-height: 1.7;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #004d40;
+    }
+    .faq {
+      margin-bottom: 20px;
+      background: #fff;
+      padding: 15px 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .faq h3 {
+      color: #00695c;
+    }
+    .faq p {
+      margin: 10px 0 0;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>الأسئلة الشائعة / التعليمات</h1>
+
+  <div class="faq">
+    <h3>كيف أسجل كمستخدم جديد؟</h3>
+    <p>انتقل إلى صفحة التسجيل، واملأ البيانات المطلوبة مثل الاسم والبريد وكلمة المرور، ثم اضغط تسجيل.</p>
+  </div>
+
+  <div class="faq">
+    <h3>كيف يمكنني توثيق مؤهلاتي؟</h3>
+    <p>بعد تسجيل الدخول، انتقل إلى صفحة "توثيق المؤهلات"، واملأ النموذج مع رفع السيرة الذاتية إذا لزم الأمر.</p>
+  </div>
+
+  <div class="faq">
+    <h3>كيف أقدم على فرصة تطوعية؟</h3>
+    <p>من صفحة "الفرص"، اختر الفرصة المناسبة، ثم اضغط على زر "تقديم" واتبع التعليمات.</p>
+  </div>
+
+  <div class="faq">
+    <h3>كيف أعرف أنه تم قبول طلبي؟</h3>
+    <p>سيتم إرسال إشعار لك في صفحة الإشعارات إذا تم قبول أو رفض طلبك.</p>
+  </div>
+
+  <div class="faq">
+    <h3>كيف تسجل الجمعية؟</h3>
+    <p>الجمعيات لديها صفحة تسجيل خاصة بها، يتم إرسال الرابط من قبل إدارة الموقع.</p>
+  </div>
+
+  <div class="faq">
+    <h3>كيف تضيف الجمعية فرصة تطوعية؟</h3>
+    <p>بعد تسجيل الدخول من قبل الجمعية، يمكنها الدخول إلى صفحة "إضافة فرصة" وملء النموذج.</p>
+  </div>
+
+</body>
+</html>
+"""
+
+file_path = Path("/mnt/data/help.html")
+file_path.write_text(html_content, encoding="utf-8")
+
+file_path.name

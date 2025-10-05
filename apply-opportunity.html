@@ -1,0 +1,90 @@
+<body>
+  <h1>تفاصيل الفرصة</h1>
+  <div id="opportunity-details">
+    <!-- هنا بيانات الفرصة -->
+  </div>
+
+  <button id="applyBtn">📝 تقديم على هذه الفرصة</button>
+  <p id="statusMsg"></p>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFirestore, doc, getDoc, addDoc, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAlMibtDbLAZLMhhJNho5Sih_qBfWxZyXI",
+      authDomain: "momaken-45ba9.firebaseapp.com",
+      projectId: "momaken-45ba9",
+      storageBucket: "momaken-45ba9.appspot.com",
+      messagingSenderId: "638133555280",
+      appId: "1:638133555280:web:c84bd87c15cabe55d30155"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth();
+    const db = getFirestore();
+
+    const applyBtn = document.getElementById("applyBtn");
+    const statusMsg = document.getElementById("statusMsg");
+    const params = new URLSearchParams(window.location.search);
+    const opportunityId = params.get("id");
+
+    let currentUser;
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) return window.location.href = "login.html";
+      currentUser = user;
+      loadOpportunity();
+    });
+
+    async function loadOpportunity() {
+      const docRef = doc(db, "opportunities", opportunityId);
+      const snapshot = await getDoc(docRef);
+      if (!snapshot.exists()) {
+        document.getElementById("opportunity-details").textContent = "الفرصة غير موجودة";
+        applyBtn.style.display = "none";
+        return;
+      }
+
+      const opp = snapshot.data();
+      document.getElementById("opportunity-details").innerHTML = `
+        <h3>${opp.title}</h3>
+        <p>التاريخ: ${opp.date}</p>
+        <p>الفئة: ${opp.category}</p>
+        <p>الوصف: ${opp.description}</p>
+      `;
+    }
+
+    applyBtn.addEventListener("click", async () => {
+      try {
+        // 1. أضف التقديم
+        await addDoc(collection(db, "applications"), {
+          userId: currentUser.uid,
+          opportunityId,
+          status: "pending",
+          createdAt: serverTimestamp()
+        });
+
+        // 2. أرسل إشعار للجمعية
+        const oppRef = doc(db, "opportunities", opportunityId);
+        const oppSnap = await getDoc(oppRef);
+        const opp = oppSnap.data();
+
+        await addDoc(collection(db, "notifications"), {
+          to: opp.associationId,
+          message: `📩 متطوع جديد قدم على فرصة "${opp.title}"`,
+          type: "application",
+          read: false,
+          createdAt: serverTimestamp()
+        });
+
+        statusMsg.textContent = "✅ تم تقديم الطلب بنجاح!";
+        applyBtn.disabled = true;
+      } catch (err) {
+        console.error(err);
+        statusMsg.textContent = "❌ حدث خطأ أثناء التقديم.";
+      }
+    });
+  </script>
+</body>

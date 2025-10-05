@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>الدعم الفني - منصة مُمكّن</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: 'Cairo', sans-serif;
+      background: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 50px 0;
+    }
+    .support-container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 500px;
+    }
+    h1 { text-align: center; color: #2e7d32; margin-bottom: 20px; }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; margin-bottom: 8px; font-weight: bold; }
+    .form-group input, .form-group textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+    textarea { resize: vertical; height: 120px; }
+    .btn-submit {
+      width: 100%;
+      padding: 12px;
+      background-color: #2e7d32;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .btn-submit:hover { background-color: #1b5e20; }
+    .success, .error {
+      margin-top: 15px;
+      text-align: center;
+      font-weight: bold;
+    }
+    .success { color: #28a745; }
+    .error { color: #f44336; }
+  </style>
+</head>
+<body>
+
+  <div class="support-container">
+    <h1>الدعم الفني</h1>
+    <form id="supportForm">
+      <div class="form-group">
+        <label>اسمك</label>
+        <input type="text" id="name" required />
+      </div>
+      <div class="form-group">
+        <label>البريد الإلكتروني</label>
+        <input type="email" id="email" required />
+      </div>
+      <div class="form-group">
+        <label>رسالتك</label>
+        <textarea id="message" required></textarea>
+      </div>
+      <button type="submit" class="btn-submit">إرسال</button>
+      <div id="feedback" class="success"></div>
+      <div id="error" class="error"></div>
+    </form>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAlMibtDbLAZLMhhJNho5Sih_qBfWxZyXI",
+      authDomain: "momaken-45ba9.firebaseapp.com",
+      projectId: "momaken-45ba9",
+      storageBucket: "momaken-45ba9.appspot.com",
+      messagingSenderId: "638133555280",
+      appId: "1:638133555280:web:c84bd87c15cabe55d30155"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const form = document.getElementById("supportForm");
+    const feedback = document.getElementById("feedback");
+    const errorDiv = document.getElementById("error");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      feedback.textContent = "";
+      errorDiv.textContent = "";
+
+      const name = form.name.value.trim();
+      const email = form.email.value.trim();
+      const message = form.message.value.trim();
+
+      if (!name || !email || !message) {
+        errorDiv.textContent = "يرجى ملء جميع الحقول.";
+        return;
+      }
+
+      try {
+        await addDoc(collection(db, "supportMessages"), {
+          name,
+          email,
+          message,
+          timestamp: serverTimestamp()
+        });
+        feedback.textContent = "تم إرسال رسالتك بنجاح!";
+        form.reset();
+      } catch (err) {
+        errorDiv.textContent = "حدث خطأ أثناء إرسال الرسالة.";
+        console.error(err);
+      }
+    });
+  </script>
+</body>
+</html>

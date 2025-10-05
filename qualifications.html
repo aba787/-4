@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>توثيق المؤهلات - مُمكّن</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      font-family: 'Cairo', sans-serif;
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #eaf4ec;
+      padding: 20px;
+    }
+
+    .wrapper {
+      max-width: 600px;
+      margin: auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0, 128, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #1b5e20;
+    }
+
+    label {
+      display: block;
+      margin: 10px 0 5px;
+      font-weight: bold;
+      color: #2e7d32;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    input[type="file"],
+    input[type="number"],
+    select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #a5d6a7;
+      border-radius: 6px;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px;
+      background-color: #2e7d32;
+      color: #000;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      margin-top: 15px;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background-color: #1b5e20;
+    }
+
+    #success-message {
+      color: green;
+      text-align: center;
+      margin: 15px 0;
+      display: none;
+    }
+
+    .qualification-card {
+      background: #eaf4ec;
+      border: 1px solid #a5d6a7;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+    }
+
+    .qualification-card p {
+      margin: 3px 0;
+      font-size: 15px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <h1>توثيق المؤهلات</h1>
+
+    <form id="qualification-form">
+      <label>العنوان:</label>
+      <input type="text" name="title" required />
+
+      <label>الجهة المصدرة:</label>
+      <input type="text" name="issuer" required />
+
+      <label>تاريخ الإصدار:</label>
+      <input type="date" name="date" required />
+
+      <label>السيرة الذاتية (CV):</label>
+      <input type="file" name="cv" required />
+
+      <label>المرحلة التعليمية:</label>
+      <select name="education" required>
+        <option value="">اختر المرحلة</option>
+        <option value="ثانوي">ثانوي</option>
+        <option value="دبلوم">دبلوم</option>
+        <option value="جامعي">جامعي</option>
+        <option value="أخرى">أخرى</option>
+      </select>
+
+      <label>العمر:</label>
+      <input type="number" name="age" min="10" max="100" required />
+
+      <label>هل سبق لك التطوع؟</label>
+      <select name="volunteered" required>
+        <option value="">اختر</option>
+        <option value="نعم">نعم</option>
+        <option value="لا">لا</option>
+      </select>
+
+      <label>المنطقة:</label>
+      <select name="region" required>
+        <option value="">اختر المنطقة</option>
+        <option value="الرياض">الرياض</option>
+        <option value="جدة">جدة</option>
+        <option value="الشرقية">المنطقة الشرقية</option>
+        <option value="القصيم">القصيم</option>
+        <option value="مكة">مكة المكرمة</option>
+        <option value="المدينة">المدينة المنورة</option>
+        <option value="عسير">عسير</option>
+        <option value="حائل">حائل</option>
+        <option value="جازان">جازان</option>
+        <option value="نجران">نجران</option>
+        <option value="تبوك">تبوك</option>
+        <option value="الباحة">الباحة</option>
+        <option value="الجوف">الجوف</option>
+        <option value="الحدود الشمالية">الحدود الشمالية</option>
+      </select>
+
+      <button type="submit" class="btn">توثيق</button>
+    </form>
+
+    <p id="success-message">✅ تم التوثيق بنجاح!</p>
+    <div id="qualifications-list"></div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFirestore, collection, addDoc, getDocs, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAlMibtDbLAZLMhhJNho5Sih_qBfWxZyXI",
+      authDomain: "momaken-45ba9.firebaseapp.com",
+      projectId: "momaken-45ba9",
+      storageBucket: "momaken-45ba9.appspot.com",
+      messagingSenderId: "638133555280",
+      appId: "1:638133555280:web:c84bd87c15cabe55d30155"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth();
+    const db = getFirestore();
+
+    let currentUser;
+
+    const form = document.getElementById("qualification-form");
+    const message = document.getElementById("success-message");
+    const listContainer = document.getElementById("qualifications-list");
+
+    onAuthStateChanged(auth, user => {
+      if (!user) return window.location.href = "login.html";
+      currentUser = user;
+      renderQualifications();
+    });
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const title = form.title.value.trim();
+      const issuer = form.issuer.value.trim();
+      const date = form.date.value;
+      const cv = form.cv.files[0]?.name || "غير مرفق";
+      const education = form.education.value;
+      const age = form.age.value;
+      const volunteered = form.volunteered.value;
+      const region = form.region.value;
+
+      if (!title || !issuer || !date || !education || !age || !volunteered || !region) {
+        alert("املأ جميع الحقول المطلوبة");
+        return;
+      }
+
+      await addDoc(collection(doc(db, "users", currentUser.uid), "qualifications"), {
+        title, issuer, date, cv, education, age, volunteered, region
+      });
+
+      // الانتقال بعد النجاح
+      window.location.href = "opportunities.html";
+
+      form.reset();
+      message.style.display = "block";
+      setTimeout(() => message.style.display = "none", 3000);
+      renderQualifications();
+    });
+
+    async function renderQualifications() {
+      listContainer.innerHTML = "";
+      const snapshot = await getDocs(collection(doc(db, "users", currentUser.uid), "qualifications"));
+
+      if (snapshot.empty) {
+        listContainer.innerHTML = "<p style='text-align:center;'>لا توجد مؤهلات موثقة بعد.</p>";
+        return;
+      }
+
+      snapshot.forEach(docSnap => {
+        const q = docSnap.data();
+        const div = document.createElement("div");
+        div.className = "qualification-card";
+        div.innerHTML = `
+          <p>العنوان: ${q.title}</p>
+          <p>الجهة: ${q.issuer}</p>
+          <p>تاريخ الإصدار: ${q.date}</p>
+          <p>المرحلة التعليمية: ${q.education}</p>
+          <p>العمر: ${q.age}</p>
+          <p>سبق له التطوع؟ ${q.volunteered}</p>
+          <p>المنطقة: ${q.region}</p>
+          <p>السيرة الذاتية: ${q.cv}</p>
+        `;
+        listContainer.appendChild(div);
+      });
+    }
+  </script>
+</body>
+</html>

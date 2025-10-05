@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>الفرص التطوعية</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    * { font-family: 'Cairo', sans-serif; box-sizing: border-box; margin:0; padding:0; }
+    body { background-color:#f5f7fa; padding-bottom:80px; }
+    .wrapper { padding:20px; }
+    h1 { text-align:center; margin-bottom:25px; color:#333; }
+    .opportunity-card { background:#fff; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.05); padding:20px; margin-bottom:15px; border:1px solid #eee; transition: transform 0.2s ease; }
+    .opportunity-card:hover { transform: translateY(-3px); }
+    .opportunity-card h3 { font-size:20px; margin-bottom:10px; color:#333; }
+    .opportunity-card p { margin:4px 0; font-size:15px; color:#555; }
+    .apply-btn { display:inline-block; margin-top:12px; padding:10px 20px; background-color:#008080; color:white; border:none; border-radius:8px; font-size:16px; cursor:pointer; transition: background-color 0.3s ease; }
+    .apply-btn:hover { background-color:#006666; }
+    .bottom-nav { position:fixed; bottom:0; right:0; left:0; height:60px; background:#fff; border-top:1px solid #ddd; display:flex; justify-content:space-around; align-items:center; font-size:24px; z-index:1000; }
+    .bottom-nav a { color:#333; text-decoration:none; }
+    #filters { margin-bottom:20px; display:flex; flex-wrap:wrap; gap:10px; align-items:flex-end; }
+    #filters label { margin:0 5px 0 0; }
+    #filters select, #filters button { padding:6px 10px; border-radius:6px; border:1px solid #aaa; }
+  </style>
+</head>
+<body>
+
+<div class="wrapper">
+  <h1>الفرص التطوعية المتاحة</h1>
+
+  <!-- الفلاتر -->
+  <div id="filters">
+    <label>المنطقة:</label>
+    <select id="filter-region">
+      <option value="">الكل</option>
+      <option value="الرياض">الرياض</option>
+      <option value="جدة">جدة</option>
+      <option value="الشرقية">المنطقة الشرقية</option>
+    </select>
+
+    <label>الجنس:</label>
+    <select id="filter-gender">
+      <option value="">الكل</option>
+      <option value="ذكر">ذكر</option>
+      <option value="أنثى">أنثى</option>
+    </select>
+
+    <label>الفئة:</label>
+    <select id="filter-category">
+      <option value="">الكل</option>
+      <option value="تقني">تقني</option>
+      <option value="تطوعي">تطوعي</option>
+      <option value="إداري">إداري</option>
+    </select>
+
+    <button id="apply-filters">تطبيق الفلترة</button>
+  </div>
+
+  <div id="opportunity-list">🔄 جاري تحميل الفرص...</div>
+</div>
+
+<footer class="bottom-nav">
+  <a href="opportunities.html">🏠</a>
+  <a href="favorites.html">❤️</a>
+  <a href="chat.html">💬</a>
+  <a href="my-requests.html">📝</a>
+  <a href="edit-profile.html">👤</a>
+</footer>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, collection, getDocs, doc, getDoc, setDoc, updateDoc, increment, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAlMibtDbLAZLMhhJNho5Sih_qBfWxZyXI",
+  authDomain: "momaken-45ba9.firebaseapp.com",
+  projectId: "momaken-45ba9",
+  storageBucket: "momaken-45ba9.appspot.com",
+  messagingSenderId: "638133555280",
+  appId: "1:638133555280:web:c84bd87c15cabe55d30155"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+let currentUserData;
+const list = document.getElementById("opportunity-list");
+const filters = { region:"", gender:"", category:"" };
+
+document.getElementById("apply-filters").addEventListener("click", () => {
+  filters.region = document.getElementById("filter-region").value;
+  filters.gender = document.getElementById("filter-gender").value;
+  filters.category = document.getElementById("filter-category").value;
+  loadOpportunities();
+});
+
+onAuthStateChanged(auth, async user => {
+  if(!user) return window.location.href="login.html";
+  const userDoc = await getDoc(doc(db, "users", user.uid));
+  currentUserData = userDoc.data() || {};
+  loadOpportunities();
+});
+
+async function loadOpportunities() {
+  list.innerHTML = "🔄 جاري تحميل الفرص...";
+  const snap = await getDocs(collection(db,"opportunities"));
+
+  const filtered = snap.docs.filter(d => {
+    const opp = d.data();
+    if(filters.gender && opp.requiredGender && opp.requiredGender!==filters.gender) return false;
+    if(filters.region && opp.requiredRegion && opp.requiredRegion!==filters.region) return false;
+    if(filters.category && opp.category && opp.category!==filters.category) return false;
+    if(opp.minAge && currentUserData.age && currentUserData.age < opp.minAge) return false;
+    if(opp.specialization && currentUserData.specialization && opp.specialization!==currentUserData.specialization) return false;
+    if(opp.maxApplicants && opp.currentApplicants>=opp.maxApplicants) return false;
+    return true;
+  });
+
+  if(filtered.length===0){
+    list.innerHTML="<p>❌ لا توجد فرص تطابق الفلاتر الحالية.</p>";
+    return;
+  }
+
+  list.innerHTML="";
+  filtered.forEach(d=>{
+    const opp = d.data();
+    const oppId = d.id;
+    const card = document.createElement("div");
+    card.className="opportunity-card";
+    card.innerHTML=`
+      <h3>${opp.title}</h3>
+      <p>الفئة: ${opp.category}</p>
+      <p>المنطقة: ${opp.requiredRegion||"غير محددة"}</p>
+      <p>الجنس المطلوب: ${opp.requiredGender||"الكل"}</p>
+      <p>الحد الأدنى للعمر: ${opp.minAge||"غير محدد"}</p>
+      <p>التخصص المطلوب: ${opp.specialization||"غير محدد"}</p>
+      <p>المطلوب: ${opp.maxApplicants||"غير محدد"} | الحالي: ${opp.currentApplicants||0}</p>
+      <button class="apply-btn" data-id="${oppId}">قدّم الآن</button>
+    `;
+    list.appendChild(card);
+  });
+}
+
+document.addEventListener("click", async e=>{
+  const btn = e.target.closest(".apply-btn");
+  if(!btn) return;
+  if(!auth.currentUser){ alert("⚠️ يرجى تسجيل الدخول أولاً."); return; }
+
+  const oppId = btn.dataset.id;
+  const userId = auth.currentUser.uid;
+  const reqRef = doc(db,"requests",`${userId}_${oppId}`);
+  const reqSnap = await getDoc(reqRef);
+
+  if(reqSnap.exists()){ alert("⚠️ لقد قدمت مسبقاً على هذه الفرصة."); return; }
+
+  await setDoc(reqRef,{ uid:userId, opportunityId:oppId, status:"قيد المراجعة", createdAt:serverTimestamp() });
+  await updateDoc(doc(db,"opportunities",oppId),{ currentApplicants: increment(1) });
+
+  alert("✅ تم التقديم على الفرصة!");
+  loadOpportunities();
+});
+</script>
+</body>
+</html>

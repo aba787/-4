@@ -1,0 +1,170 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>لوحة الشات - الأدمن</title>
+  <style>
+    body { font-family: 'Cairo', sans-serif; background: #f9f9f9; margin: 0; padding: 0; display: flex; height: 100vh; }
+    .sidebar { width: 30%; background: #fff; overflow-y: auto; border-left: 1px solid #ddd; }
+    .sidebar h3 { padding: 15px; margin: 0; background: #008080; color: white; }
+    .user-list { list-style: none; padding: 0; margin: 0; }
+    .user-list li { padding: 10px 15px; border-bottom: 1px solid #eee; cursor: pointer; }
+    .user-list li:hover { background: #f0f0f0; }
+    .user-list li.active { background: #e0f7fa; }
+    .chat-area { flex: 1; display: flex; flex-direction: column; }
+    .chat-header { padding: 15px; background: #008080; color: white; }
+    .chat-box { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; }
+    .chat-message { margin: 5px 0; padding: 10px; border-radius: 10px; max-width: 80%; }
+    .chat-message.me { background: #d1f7d6; align-self: flex-end; }
+    .chat-message.other { background: #f1f1f1; align-self: flex-start; }
+    .input-area { display: flex; padding: 10px; background: #fff; border-top: 1px solid #ccc; }
+    .input-area input { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 6px; }
+    .input-area button { margin-right: 10px; padding: 10px 20px; background: #008080; color: white; border: none; border-radius: 6px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <h3>المستخدمين</h3>
+    <ul class="user-list" id="userList">
+      <li>جاري التحميل...</li>
+    </ul>
+  </div>
+
+  <div class="chat-area">
+    <div class="chat-header">
+      <h3 id="chatTitle">اختر مستخدم للبدء في المحادثة</h3>
+    </div>
+    <div class="chat-box" id="chatBox">
+      <p style="text-align: center; color: #999;">اختر مستخدماً من القائمة لبدء المحادثة</p>
+    </div>
+    <div class="input-area">
+      <input type="text" id="adminMsgInput" placeholder="اكتب رسالتك..." disabled />
+      <button id="adminSendBtn" disabled>إرسال</button>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getFirestore,
+      collectionGroup,
+      getDocs,
+      doc,
+      collection,
+      query,
+      orderBy,
+      onSnapshot,
+      addDoc,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAlMibtDbLAZLMhhJNho5Sih_qBfWxZyXI",
+      authDomain: "momaken-45ba9.firebaseapp.com",
+      projectId: "momaken-45ba9",
+      storageBucket: "momaken-45ba9.appspot.com",
+      messagingSenderId: "638133555280",
+      appId: "1:638133555280:web:c84bd87c15cabe55d30155"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const userList = document.getElementById("userList");
+    const chatBox = document.getElementById("chatBox");
+    const chatTitle = document.getElementById("chatTitle");
+    const msgInput = document.getElementById("adminMsgInput");
+    const sendBtn = document.getElementById("adminSendBtn");
+
+    let selectedUserId = null;
+    let unsubscribe = null;
+
+    // جلب المستخدمين اللي عندهم محادثات
+    async function fetchUsers() {
+      const snapshot = await getDocs(collectionGroup(db, "messages"));
+      const userIds = new Set();
+      snapshot.forEach(doc => {
+        const path = doc.ref.path;
+        const parts = path.split("/");
+        const userId = parts[1];
+        userIds.add(userId);
+      });
+
+      userList.innerHTML = "";
+      userIds.forEach(userId => {
+        const li = document.createElement("li");
+        li.textContent = `مستخدم ${userId.substr(0, 8)}...`;
+        li.dataset.userId = userId;
+        li.addEventListener("click", () => selectUser(userId));
+        userList.appendChild(li);
+      });
+
+      if (userIds.size === 0) {
+        userList.innerHTML = "<li>لا توجد محادثات</li>";
+      }
+    }
+
+    function selectUser(userId) {
+      // إزالة التحديد السابق
+      document.querySelectorAll(".user-list li").forEach(li => li.classList.remove("active"));
+      
+      // تحديد المستخدم الجديد
+      document.querySelector(`[data-user-id="${userId}"]`).classList.add("active");
+      
+      selectedUserId = userId;
+      chatTitle.textContent = `محادثة مع مستخدم ${userId.substr(0, 8)}...`;
+      
+      // تفعيل الإدخال
+      msgInput.disabled = false;
+      sendBtn.disabled = false;
+      
+      // تحميل الرسائل
+      loadMessages(userId);
+    }
+
+    function loadMessages(userId) {
+      if (unsubscribe) unsubscribe();
+      
+      const messagesRef = collection(db, "users", userId, "messages");
+      const q = query(messagesRef, orderBy("timestamp", "asc"));
+      
+      unsubscribe = onSnapshot(q, (snapshot) => {
+        chatBox.innerHTML = "";
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const div = document.createElement("div");
+          div.className = `chat-message ${data.sender === 'admin' ? 'me' : 'other'}`;
+          div.textContent = data.text;
+          chatBox.appendChild(div);
+        });
+        chatBox.scrollTop = chatBox.scrollHeight;
+      });
+    }
+
+    async function sendMessage() {
+      if (!selectedUserId || !msgInput.value.trim()) return;
+      
+      try {
+        await addDoc(collection(db, "users", selectedUserId, "messages"), {
+          text: msgInput.value.trim(),
+          sender: "admin",
+          timestamp: serverTimestamp()
+        });
+        msgInput.value = "";
+      } catch (error) {
+        alert("خطأ في إرسال الرسالة: " + error.message);
+      }
+    }
+
+    sendBtn.addEventListener("click", sendMessage);
+    msgInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") sendMessage();
+    });
+
+    // تحميل المستخدمين عند بدء التطبيق
+    fetchUsers();
+  </script>
+</body>
+</html>

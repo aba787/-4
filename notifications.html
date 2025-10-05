@@ -1,0 +1,163 @@
+from pathlib import Path
+
+html_content = """
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>الإشعارات</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      font-family: 'Cairo', sans-serif;
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 0;
+    }
+    header.topbar {
+      background-color: #004d40;
+      color: #fff;
+      padding: 15px;
+    }
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .nav-links a {
+      color: #fff;
+      margin: 0 10px;
+      text-decoration: none;
+    }
+    .nav-links .active {
+      font-weight: bold;
+      border-bottom: 2px solid #fff;
+    }
+    .login-btn {
+      background: #fff;
+      color: #004d40;
+      padding: 6px 12px;
+      border-radius: 4px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    main {
+      padding: 20px;
+    }
+    .notification {
+      background: #fff;
+      margin: 15px 0;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .notification h3 {
+      margin: 0 0 10px 0;
+      font-size: 18px;
+    }
+    .notification p {
+      margin: 0;
+      color: #555;
+    }
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background: #004d40;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+    }
+    .bottom-nav a {
+      color: white;
+      font-size: 20px;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ✅ الشريط العلوي -->
+  <header class="topbar">
+    <nav class="navbar">
+      <div class="nav-links">
+        <a href="index.html">الرئيسية</a>
+        <a href="opportunities.html">الفرص</a>
+        <a href="favorites.html">المفضلة</a>
+        <a href="chat.html">الدردشة</a>
+        <a href="notifications.html" class="active">الإشعارات</a>
+        <a href="profile.html">ملفي</a>
+      </div>
+      <a href="login.html" class="btn login-btn">تسجيل الدخول</a>
+    </nav>
+  </header>
+
+  <!-- ✅ الإشعارات -->
+  <main id="notifications-container">
+    <!-- الإشعارات تُعرض هنا -->
+  </main>
+
+  <!-- ✅ شريط التنقل السفلي -->
+  <footer class="bottom-nav">
+    <a href="opportunities.html">🏠</a>
+    <a href="favorites.html">❤️</a>
+    <a href="chat.html">💬</a>
+    <a href="notifications.html">📝</a>
+    <a href="edit-profile.html">👤</a>
+  </footer>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAlMibtDbLAZLMhhJNho5Sih_qBfWxZyXI",
+      authDomain: "momaken-45ba9.firebaseapp.com",
+      projectId: "momaken-45ba9",
+      storageBucket: "momaken-45ba9.appspot.com",
+      messagingSenderId: "638133555280",
+      appId: "1:638133555280:web:c84bd87c15cabe55d30155"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const container = document.getElementById("notifications-container");
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) return window.location.href = "login.html";
+
+      const uid = user.uid;
+      const userRef = collection(db, "notifications");
+      const q = query(userRef, where("uid", "==", uid));
+      const snapshot = await getDocs(q);
+
+      if (snapshot.empty) {
+        container.innerHTML = "<p style='text-align:center;'>لا توجد إشعارات حالياً.</p>";
+        return;
+      }
+
+      snapshot.forEach(doc => {
+        const n = doc.data();
+        const div = document.createElement("div");
+        div.className = "notification";
+        div.innerHTML = `
+          <h3>${n.title}</h3>
+          <p>${n.body}</p>
+        `;
+        container.appendChild(div);
+      });
+    });
+  </script>
+
+</body>
+</html>
+"""
+
+# حفظ الملف
+file_path = Path("/mnt/data/notifications.html")
+file_path.write_text(html_content, encoding="utf-8")
+file_path.name
