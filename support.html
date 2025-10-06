@@ -511,7 +511,7 @@
 
       // Validate required fields
       if (!supportData.name || !supportData.email || !supportData.subject || !supportData.message) {
-        showMessage('يرجى ملء جميع الحقول المطلوبة (*)، 'error');
+        showMessage('يرجى ملء جميع الحقول المطلوبة (*)', 'error');
         submitBtn.disabled = false;
         loadingSpinner.style.display = 'none';
         return;
