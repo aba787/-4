@@ -113,10 +113,7 @@ body {
 /* ========== Hero Section ========== */
 .hero {
   position: relative;
-  background: linear-gradient(135deg, 
-    rgba(46, 125, 50, 0.9), 
-    rgba(102, 187, 106, 0.8)), 
-    url('https://i.postimg.cc/kMVvp5nR/IMG-1698.jpg');
+  background: url('https://i.postimg.cc/kMVvp5nR/IMG-1698.jpg');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -134,7 +131,7 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><polygon fill="rgba(255,255,255,0.1)" points="0,1000 1000,0 1000,1000"/></svg>');
+  background: rgba(0, 0, 0, 0.3);
 }
 
 .hero-overlay {
