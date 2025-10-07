@@ -1,76 +1,710 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <title>الأسئلة الشائعة - تعليمات</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>المساعدة - منصة مُمكّن</title>
+  <meta name="description" content="الأسئلة الشائعة والإرشادات لاستخدام منصة مُمكّن التطوعية">
+  
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Main Styles -->
+  <link rel="stylesheet" href="style.css">
+  
+  <!-- Page-specific styles -->
   <style>
     body {
-      font-family: 'Cairo', sans-serif;
-      background-color: #f9f9f9;
-      padding: 20px;
-      margin: 0;
-      line-height: 1.7;
-      color: #333;
+      background: linear-gradient(135deg, #f8fdf9 0%, #e8f5e8 100%);
+      min-height: 100vh;
+      padding-top: 80px;
     }
-    h1 {
+
+    .help-page {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .page-header {
       text-align: center;
-      color: #004d40;
+      margin-bottom: 50px;
     }
-    .faq {
+
+    .page-header h1 {
+      font-size: 2.5rem;
+      color: var(--primary-color);
+      margin-bottom: 15px;
+      font-weight: 700;
+    }
+
+    .page-header p {
+      font-size: 1.1rem;
+      color: var(--text-light);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .help-container {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 40px;
+      margin-top: 40px;
+    }
+
+    .help-sidebar {
+      background: var(--white);
+      padding: 30px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      height: fit-content;
+      position: sticky;
+      top: 100px;
+    }
+
+    .help-sidebar h3 {
+      color: var(--primary-color);
       margin-bottom: 20px;
-      background: #fff;
-      padding: 15px 20px;
+      font-size: 1.3rem;
+      font-weight: 600;
+    }
+
+    .category-list {
+      list-style: none;
+    }
+
+    .category-list li {
+      margin-bottom: 12px;
+    }
+
+    .category-list a {
+      color: var(--text-light);
+      text-decoration: none;
+      padding: 10px 15px;
       border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      display: block;
+      transition: var(--transition);
+      font-weight: 500;
     }
-    .faq h3 {
-      color: #00695c;
+
+    .category-list a:hover,
+    .category-list a.active {
+      background: var(--light-bg);
+      color: var(--primary-color);
+      transform: translateX(-5px);
     }
-    .faq p {
-      margin: 10px 0 0;
+
+    .help-content {
+      background: var(--white);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .search-container {
+      padding: 30px;
+      background: var(--light-bg);
+      border-bottom: 1px solid #eee;
+    }
+
+    .search-box {
+      position: relative;
+      width: 100%;
+      max-width: 500px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 15px 50px 15px 20px;
+      border: 2px solid #e0e0e0;
+      border-radius: 25px;
+      font-size: 16px;
+      transition: var(--transition);
+      background: var(--white);
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-light);
+      font-size: 1.2rem;
+    }
+
+    .faq-section {
+      padding: 0;
+    }
+
+    .category-section {
+      padding: 40px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .category-section:last-child {
+      border-bottom: none;
+    }
+
+    .category-title {
+      color: var(--primary-color);
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 25px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .category-icon {
+      font-size: 1.8rem;
+      color: var(--secondary-color);
+    }
+
+    .faq-item {
+      margin-bottom: 20px;
+      border: 1px solid #f0f0f0;
+      border-radius: 10px;
+      overflow: hidden;
+      transition: var(--transition);
+    }
+
+    .faq-item:hover {
+      box-shadow: 0 5px 15px rgba(46, 125, 50, 0.1);
+    }
+
+    .faq-question {
+      padding: 20px;
+      background: var(--white);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+      color: var(--text-dark);
+      transition: var(--transition);
+    }
+
+    .faq-question:hover {
+      background: var(--light-bg);
+    }
+
+    .faq-question.active {
+      background: var(--primary-color);
+      color: var(--white);
+    }
+
+    .faq-toggle {
+      font-size: 1.5rem;
+      color: var(--secondary-color);
+      transition: var(--transition);
+      transform-origin: center;
+    }
+
+    .faq-question.active .faq-toggle {
+      color: var(--white);
+      transform: rotate(45deg);
+    }
+
+    .faq-answer {
+      padding: 0 20px;
+      background: var(--light-bg);
+      color: var(--text-light);
+      line-height: 1.7;
+      max-height: 0;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .faq-answer.active {
+      padding: 20px;
+      max-height: 200px;
+    }
+
+    .contact-support {
+      background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+      color: var(--white);
+      padding: 40px;
+      text-align: center;
+      margin-top: 40px;
+      border-radius: var(--border-radius);
+    }
+
+    .contact-support h3 {
+      font-size: 1.5rem;
+      margin-bottom: 15px;
+    }
+
+    .contact-support p {
+      margin-bottom: 25px;
+      opacity: 0.9;
+    }
+
+    .contact-btn {
+      background: var(--white);
+      color: var(--primary-color);
+      padding: 15px 30px;
+      border-radius: 25px;
+      text-decoration: none;
+      font-weight: 600;
+      display: inline-block;
+      transition: var(--transition);
+    }
+
+    .contact-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(255, 255, 255, 0.3);
+    }
+
+    .no-results {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-light);
+    }
+
+    .no-results-icon {
+      font-size: 4rem;
+      margin-bottom: 20px;
+      opacity: 0.5;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .help-container {
+        grid-template-columns: 1fr;
+        gap: 30px;
+      }
+
+      .help-sidebar {
+        position: static;
+        order: 2;
+      }
+
+      .help-content {
+        order: 1;
+      }
+
+      .page-header h1 {
+        font-size: 2rem;
+      }
+
+      .category-section {
+        padding: 30px 25px;
+      }
+
+      .search-container {
+        padding: 25px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .help-page {
+        padding: 20px 15px;
+      }
+
+      .page-header h1 {
+        font-size: 1.8rem;
+      }
+
+      .category-section {
+        padding: 25px 20px;
+      }
+
+      .search-container {
+        padding: 20px;
+      }
+
+      .faq-question {
+        padding: 15px;
+      }
+
+      .faq-answer.active {
+        padding: 15px;
+      }
     }
   </style>
 </head>
 <body>
+  <!-- Navigation -->
+  <header class="topbar">
+    <nav class="navbar">
+      <div class="nav-links">
+        <a href="index.html">الرئيسية</a>
+        <a href="opportunities.html">الفرص التطوعية</a>
+        <a href="support.html">الدعم الفني</a>
+        <a href="help.html" class="active">المساعدة</a>
+      </div>
+      <a href="login.html" class="btn login-btn">تسجيل الدخول</a>
+    </nav>
+  </header>
 
-  <h1>الأسئلة الشائعة / التعليمات</h1>
+  <!-- Main Content -->
+  <div class="help-page">
+    <!-- Page Header -->
+    <div class="page-header">
+      <h1>مركز المساعدة</h1>
+      <p>إرشادات شاملة وأسئلة شائعة لمساعدتك في استخدام منصة مُمكّن التطوعية</p>
+    </div>
 
-  <div class="faq">
-    <h3>كيف أسجل كمستخدم جديد؟</h3>
-    <p>انتقل إلى صفحة التسجيل، واملأ البيانات المطلوبة مثل الاسم والبريد وكلمة المرور، ثم اضغط تسجيل.</p>
+    <!-- Help Container -->
+    <div class="help-container">
+      <!-- Sidebar -->
+      <div class="help-sidebar">
+        <h3>الفئات</h3>
+        <ul class="category-list">
+          <li><a href="#account" class="category-link active">إدارة الحساب</a></li>
+          <li><a href="#opportunities" class="category-link">الفرص التطوعية</a></li>
+          <li><a href="#applications" class="category-link">التقديمات</a></li>
+          <li><a href="#profile" class="category-link">الملف الشخصي</a></li>
+          <li><a href="#associations" class="category-link">الجمعيات</a></li>
+          <li><a href="#technical" class="category-link">المسائل التقنية</a></li>
+        </ul>
+      </div>
+
+      <!-- Main Content -->
+      <div class="help-content">
+        <!-- Search -->
+        <div class="search-container">
+          <div class="search-box">
+            <input type="text" class="search-input" id="searchInput" placeholder="ابحث في الأسئلة الشائعة...">
+            <span class="search-icon">🔍</span>
+          </div>
+        </div>
+
+        <!-- FAQ Sections -->
+        <div class="faq-section" id="faqContent">
+          <!-- Account Management -->
+          <div class="category-section" id="account">
+            <h2 class="category-title">
+              <span class="category-icon">👤</span>
+              إدارة الحساب
+            </h2>
+            
+            <div class="faq-item">
+              <div class="faq-question" onclick="toggleFAQ(this)">
+                <span>كيف يمكنني إنشاء حساب جديد؟</span>
+                <span class="faq-toggle">+</span>
+              </div>
+              <div class="faq-answer">
+                يمكنك إنشاء حساب جديد بالنقر على زر "تسجيل حساب جديد" في أعلى الصفحة وملء المعلومات المطلوبة مثل الاسم والبريد الإلكتروني وكلمة المرور. تأكد من استخدام بريد إلكتروني صحيح لتأكيد حسابك.
+              </div>
+            </div>
+
+            <div class="faq-item">
+              <div class="faq-question" onclick="toggleFAQ(this)">
+                <span>نسيت كلمة المرور، كيف يمكنني استعادتها؟</span>
+                <span class="faq-toggle">+</span>
+              </div>
+              <div class="faq-answer">
+                في صفحة تسجيل الدخول، انقر على رابط "نسيت كلمة المرور؟" وأدخل بريدك الإلكتروني. ستصلك رسالة تحتوي على رابط لإعادة تعيين كلمة المرور.
+              </div>
+            </div>
+
+            <div class="faq-item">
+              <div class="faq-question" onclick="toggleFAQ(this)">
+                <span>كيف أقوم بتحديث معلومات حسابي؟</span>
+                <span class="faq-toggle">+</span>
+              </div>
+              <div class="faq-answer">
+                بعد تسجيل الدخول، انتقل إلى "ملفي الشخصي" من القائمة الجانبية، ثم انقر على "تعديل الملف الشخصي" لتحديث معلوماتك الشخصية والمهنية.
+              </div>
+            </div>
+          </div>
+
+          <!-- Volunteer Opportunities -->
+          <div class="category-section" id="opportunities">
+            <h2 class="category-title">
+              <span class="category-icon">🎯</span>
+              الفرص التطوعية
+            </h2>
+            
+            <div class="faq-item">
+              <div class="faq-question" onclick="toggleFAQ(this)">
+                <span>كيف يمكنني البحث عن الفرص التطوعية المناسبة؟</span>
+                <span class="faq-toggle">+</span>
+              </div>
+              <div class="faq-answer">
+                انتقل إلى صفحة "الفرص التطوعية" واستخدم فلاتر البحث لتضييق النتائج حسب المدينة، المجال، نوع التطوع، والمهارات المطلوبة. يمكنك أيضاً الاستفادة من نظام التوصيات الذكي المبني على ملفك الشخصي.
+              </div>
+            </div>
+
+            <div class="faq-item">
+              <div class="faq-question" onclick="toggleFAQ(this)">
+                <span>كيف أقدم على فرصة تطوعية؟</span>
+                <span class="faq-toggle">+</span>
+              </div>
+              <div class="faq-answer">
+                اختر الفرصة المناسبة من قائمة الفرص المتاحة، اقرأ التفاصيل والمتطلبات، ثم انقر على زر "التقدم الآن" واملأ نموذج التقديم المطلوب.
+              </div>
+            </div>
+
+            <div class="faq-item">
+              <div class="faq-question" onclick="toggleFAQ(this)">
+                <span>ما هي المعايير المطلوبة للتقدم للفرص التطوعية؟</span>
+                <span class="faq-toggle">+</span>
+              </div>
+              <div class="faq-answer">
+                تختلف المعايير حسب كل فرصة، لكن عموماً تشمل: العمر المناسب، المهارات المطلوبة، الالتزام بالوقت المحدد، وإكمال ملف التطوع الشخصي. بعض الفرص قد تتطلب خبرة سابقة أو مؤهلات خاصة.
+              </div>
+            </div>
+          </div>
+
+          <!-- Applications -->
+          <div class="category-section" id="applications">
+            <h2 class="category-title">
+              <span class="category-icon">📝</span>
+              التقديمات والطلبات
+            </h2>
+            
+            <div class="faq-item">
+              <div class="faq-question" onclick="toggleFAQ(this)">
+                <span>كيف أعرف أنه تم قبول طلبي؟</span>
+                <span class="faq-toggle">+</span>
+              </div>
+              <div class="faq-answer">
+                ستحصل على إشعار في صفحة "الإشعارات" وعبر البريد الإلكتروني عند اتخاذ قرار بشأن طلبك. يمكنك أيضاً متابعة حالة طلباتك في صفحة "طلباتي".
+              </div>
+            </div>
+
+            <div class="faq-item">
+              <div class="faq-question" onclick="toggleFAQ(this)">
+                <span>هل يمكنني تعديل طلبي بعد الإرسال؟</span>
+                <span class="faq-toggle">+</span>
+              </div>
+              <div class="faq-answer">
+                لا يمكن تعديل الطلب بعد إرساله، لكن يمكنك التواصل مع الجمعية المسؤولة مباشرة أو إلغاء الطلب وتقديم طلب جديد إذا كانت الفرصة لا تزال متاحة.
+              </div>
+            </div>
+
+            <div class="faq-item">
+              <div class="faq-question" onclick="toggleFAQ(this)">
+                <span>كم يستغرق الرد على الطلبات؟</span>
+                <span class="faq-toggle">+</span>
+              </div>
+              <div class="faq-answer">
+                عادة ما تستغرق عملية مراجعة الطلبات من 3-7 أيام عمل، لكن قد تختلف حسب الجمعية وطبيعة الفرصة التطوعية.
+              </div>
+            </div>
+          </div>
+
+          <!-- Profile -->
+          <div class="category-section" id="profile">
+            <h2 class="category-title">
+              <span class="category-icon">⚙️</span>
+              الملف الشخصي والإعدادات
+            </h2>
+            
+            <div class="faq-item">
+              <div class="faq-question" onclick="toggleFAQ(this)">
+                <span>كيف أضيف مهاراتي واهتماماتي؟</span>
+                <span class="faq-toggle">+</span>
+              </div>
+              <div class="faq-answer">
+                في صفحة "ملفي الشخصي"، انقر على "تعديل الملف الشخصي" واملأ قسم المهارات والاهتمامات. هذا سيساعد النظام في اقتراح الفرص المناسبة لك.
+              </div>
+            </div>
+
+            <div class="faq-item">
+              <div class="faq-question" onclick="toggleFAQ(this)">
+                <span>كيف يمكنني توثيق مؤهلاتي وخبراتي؟</span>
+                <span class="faq-toggle">+</span>
+              </div>
+              <div class="faq-answer">
+                انتقل إلى صفحة "توثيق المؤهلات" واملأ النموذج مع رفع المستندات المطلوبة مثل السيرة الذاتية والشهادات. هذا يزيد من فرص قبولك في الفرص التطوعية.
+              </div>
+            </div>
+          </div>
+
+          <!-- Associations -->
+          <div class="category-section" id="associations">
+            <h2 class="category-title">
+              <span class="category-icon">🏛️</span>
+              للجمعيات والمنظمات
+            </h2>
+            
+            <div class="faq-item">
+              <div class="faq-question" onclick="toggleFAQ(this)">
+                <span>كيف تسجل الجمعية في المنصة؟</span>
+                <span class="faq-toggle">+</span>
+              </div>
+              <div class="faq-answer">
+                الجمعيات لديها عملية تسجيل خاصة تتطلب تقديم الوثائق الرسمية. يتم التواصل مع إدارة المنصة للحصول على رابط التسجيل المخصص للجمعيات.
+              </div>
+            </div>
+
+            <div class="faq-item">
+              <div class="faq-question" onclick="toggleFAQ(this)">
+                <span>كيف تضيف الجمعية فرصة تطوعية جديدة؟</span>
+                <span class="faq-toggle">+</span>
+              </div>
+              <div class="faq-answer">
+                بعد تسجيل الدخول من حساب الجمعية، تستطيع الدخول إلى لوحة الإدارة وإضافة فرص تطوعية جديدة من خلال ملء النموذج المخصص مع تحديد كافة التفاصيل والمتطلبات.
+              </div>
+            </div>
+          </div>
+
+          <!-- Technical Issues -->
+          <div class="category-section" id="technical">
+            <h2 class="category-title">
+              <span class="category-icon">🔧</span>
+              المسائل التقنية
+            </h2>
+            
+            <div class="faq-item">
+              <div class="faq-question" onclick="toggleFAQ(this)">
+                <span>الموقع لا يعمل بشكل صحيح، ماذا أفعل؟</span>
+                <span class="faq-toggle">+</span>
+              </div>
+              <div class="faq-answer">
+                جرب أولاً إعادة تحميل الصفحة أو مسح ذاكرة التخزين المؤقت للمتصفح. إذا استمرت المشكلة، تواصل معنا عبر صفحة "الدعم الفني" مع وصف المشكلة بالتفصيل.
+              </div>
+            </div>
+
+            <div class="faq-item">
+              <div class="faq-question" onclick="toggleFAQ(this)">
+                <span>لا أستطيع رفع الملفات، ما السبب؟</span>
+                <span class="faq-toggle">+</span>
+              </div>
+              <div class="faq-answer">
+                تأكد من أن حجم الملف لا يتجاوز 5 ميجابايت وأن نوع الملف مدعوم (PDF, DOC, DOCX, JPG, PNG). تأكد أيضاً من استقرار الاتصال بالإنترنت.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- No Results -->
+        <div class="no-results" id="noResults" style="display: none;">
+          <div class="no-results-icon">🔍</div>
+          <h3>لا توجد نتائج</h3>
+          <p>لم نجد أسئلة تطابق بحثك. جرب كلمات مفتاحية مختلفة أو تواصل معنا مباشرة.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contact Support -->
+    <div class="contact-support">
+      <h3>لم تجد إجابة لسؤالك؟</h3>
+      <p>فريق الدعم الفني جاهز لمساعدتك على مدار الساعة</p>
+      <a href="support.html" class="contact-btn">تواصل معنا</a>
+    </div>
   </div>
 
-  <div class="faq">
-    <h3>كيف يمكنني توثيق مؤهلاتي؟</h3>
-    <p>بعد تسجيل الدخول، انتقل إلى صفحة "توثيق المؤهلات"، واملأ النموذج مع رفع السيرة الذاتية إذا لزم الأمر.</p>
-  </div>
+  <!-- Scripts -->
+  <script>
+    // FAQ Toggle functionality
+    function toggleFAQ(element) {
+      const answer = element.nextElementSibling;
+      const toggle = element.querySelector('.faq-toggle');
+      const isActive = element.classList.contains('active');
+      
+      // Close all other FAQs
+      document.querySelectorAll('.faq-question.active').forEach(q => {
+        q.classList.remove('active');
+        q.nextElementSibling.classList.remove('active');
+        q.querySelector('.faq-toggle').textContent = '+';
+      });
+      
+      if (!isActive) {
+        element.classList.add('active');
+        answer.classList.add('active');
+        toggle.textContent = '×';
+      }
+    }
 
-  <div class="faq">
-    <h3>كيف أقدم على فرصة تطوعية؟</h3>
-    <p>من صفحة "الفرص"، اختر الفرصة المناسبة، ثم اضغط على زر "تقديم" واتبع التعليمات.</p>
-  </div>
+    // Search functionality
+    const searchInput = document.getElementById('searchInput');
+    const faqItems = document.querySelectorAll('.faq-item');
+    const categorySections = document.querySelectorAll('.category-section');
+    const noResults = document.getElementById('noResults');
 
-  <div class="faq">
-    <h3>كيف أعرف أنه تم قبول طلبي؟</h3>
-    <p>سيتم إرسال إشعار لك في صفحة الإشعارات إذا تم قبول أو رفض طلبك.</p>
-  </div>
+    searchInput.addEventListener('input', function() {
+      const searchTerm = this.value.toLowerCase().trim();
+      let hasResults = false;
 
-  <div class="faq">
-    <h3>كيف تسجل الجمعية؟</h3>
-    <p>الجمعيات لديها صفحة تسجيل خاصة بها، يتم إرسال الرابط من قبل إدارة الموقع.</p>
-  </div>
+      if (searchTerm === '') {
+        // Show all sections and items
+        categorySections.forEach(section => section.style.display = 'block');
+        faqItems.forEach(item => item.style.display = 'block');
+        noResults.style.display = 'none';
+        return;
+      }
 
-  <div class="faq">
-    <h3>كيف تضيف الجمعية فرصة تطوعية؟</h3>
-    <p>بعد تسجيل الدخول من قبل الجمعية، يمكنها الدخول إلى صفحة "إضافة فرصة" وملء النموذج.</p>
-  </div>
+      faqItems.forEach(item => {
+        const question = item.querySelector('.faq-question span').textContent.toLowerCase();
+        const answer = item.querySelector('.faq-answer').textContent.toLowerCase();
+        
+        if (question.includes(searchTerm) || answer.includes(searchTerm)) {
+          item.style.display = 'block';
+          item.closest('.category-section').style.display = 'block';
+          hasResults = true;
+        } else {
+          item.style.display = 'none';
+        }
+      });
 
+      // Hide empty sections
+      categorySections.forEach(section => {
+        const visibleItems = section.querySelectorAll('.faq-item[style*="block"]').length;
+        if (visibleItems === 0) {
+          section.style.display = 'none';
+        }
+      });
+
+      noResults.style.display = hasResults ? 'none' : 'block';
+    });
+
+    // Category navigation
+    document.querySelectorAll('.category-link').forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // Remove active class from all links
+        document.querySelectorAll('.category-link').forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+        
+        // Scroll to target section
+        const targetId = this.getAttribute('href').substring(1);
+        const targetSection = document.getElementById(targetId);
+        if (targetSection) {
+          targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+
+    // Update active category on scroll
+    window.addEventListener('scroll', () => {
+      const categories = document.querySelectorAll('.category-section');
+      const categoryLinks = document.querySelectorAll('.category-link');
+      
+      let currentCategory = '';
+      
+      categories.forEach(category => {
+        const rect = category.getBoundingClientRect();
+        if (rect.top <= 200 && rect.bottom >= 200) {
+          currentCategory = category.id;
+        }
+      });
+      
+      if (currentCategory) {
+        categoryLinks.forEach(link => {
+          link.classList.remove('active');
+          if (link.getAttribute('href') === `#${currentCategory}`) {
+            link.classList.add('active');
+          }
+        });
+      }
+    });
+
+    console.log('🎯 صفحة المساعدة جاهزة');
+  </script>
+
+  <!-- Main Script -->
+  <script src="script.js" defer></script>
 </body>
 </html>
-"""
-
-file_path = Path("/mnt/data/help.html")
-file_path.write_text(html_content, encoding="utf-8")
-
-file_path.name
