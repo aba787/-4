@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -11,45 +12,202 @@
       justify-content: center;
       align-items: flex-start;
       min-height: 100vh;
-      background: #eaf4ec;
+      background: linear-gradient(135deg, #f8fdf9 0%, #e8f5e8 100%);
       font-family: 'Cairo', sans-serif;
-      padding-top: 50px;
+      padding: 20px;
     }
     .register-container {
-      max-width: 500px;
+      max-width: 600px;
       width: 100%;
-      background: #fff;
-      padding: 30px 40px;
-      border-radius: 12px;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+      background: var(--white);
+      padding: 40px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      margin-top: 20px;
     }
-    h1 { text-align: center; color: #2e7d32; margin-bottom: 20px; }
-    .form-group { margin-bottom: 20px; position: relative; }
-    .form-group label { display: block; margin-bottom: 8px; font-weight: bold; }
+    h1 { 
+      text-align: center; 
+      color: var(--primary-color); 
+      margin-bottom: 30px;
+      font-size: 2rem;
+      font-weight: 700;
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .form-group { 
+      margin-bottom: 25px; 
+      position: relative; 
+    }
+    .form-group label { 
+      display: block; 
+      margin-bottom: 8px; 
+      font-weight: 600;
+      color: var(--text-dark);
+      font-size: 1rem;
+    }
     .form-group input, .form-group select {
-      width: 100%; padding: 12px; border: 1px solid #ddd;
-      border-radius: 6px; font-size: 16px;
+      width: 100%; 
+      padding: 15px; 
+      border: 2px solid #e0e0e0;
+      border-radius: 10px; 
+      font-size: 16px;
+      font-family: inherit;
+      transition: var(--transition);
+      background: #fafafa;
+    }
+    .form-group input:focus, .form-group select:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+      background: var(--white);
+    }
+    .form-group input.valid {
+      border-color: var(--secondary-color);
+    }
+    .form-group input.invalid {
+      border-color: #f44336;
+    }
+    .password-container {
+      position: relative;
+    }
+    .toggle-password {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      font-size: 18px;
+      color: var(--text-light);
+      transition: var(--transition);
+    }
+    .toggle-password:hover {
+      color: var(--primary-color);
+    }
+    .password-strength {
+      font-size: 0.85rem;
+      margin-top: 5px;
+      padding: 5px;
+      border-radius: 4px;
+      display: none;
+    }
+    .password-strength.weak {
+      color: #f44336;
+      background: #ffebee;
+    }
+    .password-strength.medium {
+      color: #ff9800;
+      background: #fff3e0;
+    }
+    .password-strength.strong {
+      color: #4caf50;
+      background: #e8f5e9;
     }
     .btn-submit {
-      width: 100%; padding: 12px;
-      background-color: #2e7d32; color: white;
-      border: none; border-radius: 6px;
-      font-size: 16px; cursor: pointer;
-      transition: 0.3s ease;
+      width: 100%;
+      padding: 18px;
+      background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+      color: var(--white);
+      border: none;
+      border-radius: 10px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
     }
-    .btn-submit:disabled { background: #9e9e9e; cursor: not-allowed; }
-    .btn-submit:hover:not(:disabled) { background-color: #1b5e20; }
+    .btn-submit::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: var(--transition);
+    }
+    .btn-submit:hover::before {
+      left: 100%;
+    }
+    .btn-submit:disabled { 
+      background: #ccc; 
+      cursor: not-allowed; 
+      transform: none;
+    }
+    .btn-submit:hover:not(:disabled) { 
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(46, 125, 50, 0.3);
+    }
     .error, .success {
-      margin-top: 10px; text-align: center; font-size: 14px; display: none;
+      margin-top: 15px; 
+      text-align: center; 
+      font-size: 14px; 
+      display: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: 500;
     }
-    .error { color: #f44336; }
-    .success { color: #2e7d32; }
-    .links { text-align: center; margin-top: 20px; }
-    .links a { color: #2e7d32; text-decoration: none; }
-    .links a:hover { text-decoration: underline; }
-    .toggle-password {
-      position:absolute; left: 15px; top: 50%;
-      transform: translateY(-50%); cursor:pointer; font-size: 18px;
+    .error { 
+      color: #f44336;
+      background: #ffebee;
+      border: 1px solid #ffcdd2;
+    }
+    .success { 
+      color: #2e7d32;
+      background: #e8f5e9;
+      border: 1px solid #c8e6c9;
+    }
+    .links { 
+      text-align: center; 
+      margin-top: 25px; 
+    }
+    .links p {
+      margin: 10px 0;
+    }
+    .links a { 
+      color: var(--primary-color); 
+      text-decoration: none;
+      font-weight: 600;
+      transition: var(--transition);
+    }
+    .links a:hover { 
+      text-decoration: underline;
+      color: var(--secondary-color);
+    }
+    .loading-spinner {
+      display: none;
+      margin-left: 10px;
+    }
+    .field-hint {
+      font-size: 0.85rem;
+      color: var(--text-light);
+      margin-top: 5px;
+    }
+    .required {
+      color: #f44336;
+    }
+
+    @media (max-width: 768px) {
+      .form-row {
+        grid-template-columns: 1fr;
+        gap: 15px;
+      }
+      .register-container {
+        padding: 30px 25px;
+        margin: 10px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.8rem;
+      }
+      .register-container {
+        padding: 25px 20px;
+      }
     }
   </style>
 </head>
@@ -57,60 +215,92 @@
   <div class="register-container">
     <h1>إنشاء حساب جديد</h1>
     <form id="registerForm">
-      <div class="form-group">
-        <label>الاسم الكامل</label>
-        <input type="text" id="fullName" required />
+      <div class="form-row">
+        <div class="form-group">
+          <label>الاسم الأول <span class="required">*</span></label>
+          <input type="text" id="firstName" required placeholder="أدخل اسمك الأول" />
+        </div>
+        <div class="form-group">
+          <label>الاسم الأخير <span class="required">*</span></label>
+          <input type="text" id="lastName" required placeholder="أدخل اسمك الأخير" />
+        </div>
       </div>
 
       <div class="form-group">
-        <label>البريد الإلكتروني</label>
-        <input type="email" id="email" required />
+        <label>البريد الإلكتروني <span class="required">*</span></label>
+        <input type="email" id="email" required placeholder="example@email.com" />
+        <div class="field-hint">سيتم استخدام البريد الإلكتروني لتسجيل الدخول</div>
       </div>
 
-      <div class="form-group">
-        <label>رقم الهاتف</label>
-        <input type="tel" id="phone" pattern="^05\d{8}$" placeholder="مثال: 05XXXXXXXX" required />
+      <div class="form-row">
+        <div class="form-group">
+          <label>رقم الهاتف <span class="required">*</span></label>
+          <input type="tel" id="phone" pattern="^05\d{8}$" placeholder="05XXXXXXXX" required />
+          <div class="field-hint">رقم هاتف سعودي يبدأ بـ 05</div>
+        </div>
+        <div class="form-group">
+          <label>العمر</label>
+          <input type="number" id="age" min="16" max="80" placeholder="العمر" />
+        </div>
       </div>
 
-      <div class="form-group">
-        <label>المنطقة</label>
-        <select id="region" required>
-          <option value="">اختر المنطقة</option>
-          <option value="الرياض">الرياض</option>
-          <option value="جدة">جدة</option>
-          <option value="الدمام">الدمام</option>
-          <option value="مكة">مكة</option>
-          <option value="المدينة">المدينة</option>
-        </select>
+      <div class="form-row">
+        <div class="form-group">
+          <label>المنطقة <span class="required">*</span></label>
+          <select id="region" required>
+            <option value="">اختر المنطقة</option>
+            <option value="الرياض">الرياض</option>
+            <option value="مكة المكرمة">مكة المكرمة</option>
+            <option value="المدينة المنورة">المدينة المنورة</option>
+            <option value="المنطقة الشرقية">المنطقة الشرقية</option>
+            <option value="عسير">عسير</option>
+            <option value="تبوك">تبوك</option>
+            <option value="حائل">حائل</option>
+            <option value="الحدود الشمالية">الحدود الشمالية</option>
+            <option value="جازان">جازان</option>
+            <option value="نجران">نجران</option>
+            <option value="الباحة">الباحة</option>
+            <option value="الجوف">الجوف</option>
+            <option value="القصيم">القصيم</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>الجنس <span class="required">*</span></label>
+          <select id="gender" required>
+            <option value="">اختر الجنس</option>
+            <option value="ذكر">ذكر</option>
+            <option value="أنثى">أنثى</option>
+          </select>
+        </div>
       </div>
 
-      <div class="form-group">
-        <label>الجنس</label>
-        <select id="gender" required>
-          <option value="">اختر الجنس</option>
-          <option value="ذكر">ذكر</option>
-          <option value="أنثى">أنثى</option>
-        </select>
+      <div class="form-row">
+        <div class="form-group">
+          <label>كلمة المرور <span class="required">*</span></label>
+          <div class="password-container">
+            <input type="password" id="password" required minlength="6" placeholder="أدخل كلمة مرور قوية" />
+            <span id="togglePassword" class="toggle-password">👁️</span>
+          </div>
+          <div id="passwordStrength" class="password-strength"></div>
+        </div>
+        <div class="form-group">
+          <label>تأكيد كلمة المرور <span class="required">*</span></label>
+          <div class="password-container">
+            <input type="password" id="confirmPassword" required minlength="6" placeholder="أعد إدخال كلمة المرور" />
+            <span id="toggleConfirmPassword" class="toggle-password">👁️</span>
+          </div>
+        </div>
       </div>
-
-      <div class="form-group">
-        <label>كلمة المرور</label>
-        <input type="password" id="password" required minlength="6" />
-        <span id="togglePassword" class="toggle-password">👁️</span>
-      </div>
-
-      <div class="form-group">
-        <label>تأكيد كلمة المرور</label>
-        <input type="password" id="confirmPassword" required minlength="6" />
-        <span id="toggleConfirmPassword" class="toggle-password">👁️</span>
-      </div>
-
 
       <div id="error" class="error"></div>
       <div id="success" class="success"></div>
 
-      <button type="submit" id="submitBtn" 
-      class="btn-submit">إنشاء الحساب</button>
+      <button type="submit" id="submitBtn" class="btn-submit">
+        إنشاء الحساب
+        <div class="loading-spinner" id="loadingSpinner">
+          <div class="loading"></div>
+        </div>
+      </button>
     </form>
 
     <div class="links">
@@ -121,7 +311,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getAuth, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
     import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -134,100 +324,259 @@
       measurementId: "G-3ESCTR48BG"
     };
 
-    // Firebase init
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // عناصر الفورم
+    // Form elements
     const form = document.getElementById("registerForm");
     const errorDiv = document.getElementById("error");
     const successDiv = document.getElementById("success");
     const submitBtn = document.getElementById("submitBtn");
+    const loadingSpinner = document.getElementById("loadingSpinner");
     const passwordInput = document.getElementById("password");
     const confirmPasswordInput = document.getElementById("confirmPassword");
     const togglePassword = document.getElementById("togglePassword");
     const toggleConfirmPassword = document.getElementById("toggleConfirmPassword");
+    const passwordStrength = document.getElementById("passwordStrength");
 
-    // إظهار/إخفاء كلمة المرور
+    // Toggle password visibility
     togglePassword.addEventListener("click", () => {
       const type = passwordInput.type === "password" ? "text" : "password";
       passwordInput.type = type;
       togglePassword.textContent = type === "password" ? "👁️" : "🙈";
     });
 
-    // إظهار/إخفاء تأكيد كلمة المرور
     toggleConfirmPassword.addEventListener("click", () => {
       const type = confirmPasswordInput.type === "password" ? "text" : "password";
       confirmPasswordInput.type = type;
       toggleConfirmPassword.textContent = type === "password" ? "👁️" : "🙈";
     });
 
-    // تسجيل المستخدم
+    // Password strength checker
+    passwordInput.addEventListener("input", () => {
+      const password = passwordInput.value;
+      const strength = checkPasswordStrength(password);
+      
+      passwordStrength.style.display = password ? 'block' : 'none';
+      passwordStrength.className = `password-strength ${strength.level}`;
+      passwordStrength.textContent = strength.message;
+    });
+
+    // Real-time validation
+    document.querySelectorAll('input').forEach(input => {
+      input.addEventListener('blur', validateField);
+      input.addEventListener('input', validateField);
+    });
+
+    // Form submission
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
+      
+      // Reset messages
       errorDiv.style.display = "none";
       successDiv.style.display = "none";
 
-      const fullName = document.getElementById("fullName").value.trim();
-      const email = document.getElementById("email").value.trim();
-      const phone = document.getElementById("phone").value.trim();
-      const region = document.getElementById("region").value;
-      const gender = document.getElementById("gender").value;
-      const password = passwordInput.value;
-      const confirmPassword = confirmPasswordInput.value;
+      // Get form data
+      const formData = {
+        firstName: document.getElementById("firstName").value.trim(),
+        lastName: document.getElementById("lastName").value.trim(),
+        email: document.getElementById("email").value.trim(),
+        phone: document.getElementById("phone").value.trim(),
+        age: document.getElementById("age").value,
+        region: document.getElementById("region").value,
+        gender: document.getElementById("gender").value,
+        password: passwordInput.value,
+        confirmPassword: confirmPasswordInput.value
+      };
 
-      // تحقق من كلمة المرور
-      if (password !== confirmPassword) {
-        errorDiv.textContent = "كلمات المرور غير متطابقة";
-        errorDiv.style.display = "block";
+      // Validate form
+      const validation = validateForm(formData);
+      if (!validation.isValid) {
+        showError(validation.message);
         return;
       }
 
-      // تحقق من رقم الهاتف السعودي
-      if (!/^05\d{8}$/.test(phone)) {
-        errorDiv.textContent = "رقم الهاتف غير صحيح (يجب أن يبدأ بـ 05 ويكون 10 أرقام)";
-        errorDiv.style.display = "block";
-        return;
-      }
-
-      // تعطيل زر التسجيل أثناء المعالجة
-      submitBtn.disabled = true;
-      submitBtn.textContent = "⏳ جاري إنشاء الحساب...";
+      // Show loading
+      setLoading(true);
 
       try {
-        // إنشاء المستخدم
-        const cred = await createUserWithEmailAndPassword(auth, email, password);
+        // Create user account
+        const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
+        const user = userCredential.user;
 
-        // حفظ بيانات المستخدم في Firestore
-        await setDoc(doc(db, "users", cred.user.uid), {
-          fullName,
-          email,
-          phone,
-          region,
-          gender,
-          createdAt: serverTimestamp()
+        // Update user profile
+        await updateProfile(user, {
+          displayName: `${formData.firstName} ${formData.lastName}`
         });
 
-        successDiv.textContent = "✅ تم إنشاء الحساب بنجاح!";
-        successDiv.style.display = "block";
+        // Save user data to Firestore
+        await setDoc(doc(db, "users", user.uid), {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          fullName: `${formData.firstName} ${formData.lastName}`,
+          email: formData.email,
+          phone: formData.phone,
+          age: formData.age ? parseInt(formData.age) : null,
+          region: formData.region,
+          gender: formData.gender,
+          accountType: 'volunteer',
+          profileComplete: false,
+          createdAt: serverTimestamp(),
+          lastLogin: serverTimestamp()
+        });
 
-        // إعادة التوجيه بعد النجاح
+        showSuccess("✅ تم إنشاء الحساب بنجاح! جاري التوجيه...");
+
+        // Redirect to dashboard after success
         setTimeout(() => {
-          window.location.href = "qualifications.html";
+          window.location.href = "dashboard.html";
+        }, 2000);
 
-          
-        }, 1500);
-
-      } catch (err) {
-        errorDiv.textContent = "خطأ: " + err.message;
-        errorDiv.style.display = "block";
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = "إنشاء الحساب";
+      } catch (error) {
+        setLoading(false);
+        handleRegistrationError(error);
       }
     });
-  </script>
 
+    // Helper functions
+    function setLoading(isLoading) {
+      submitBtn.disabled = isLoading;
+      loadingSpinner.style.display = isLoading ? 'inline-block' : 'none';
+      submitBtn.innerHTML = isLoading ? 'جاري إنشاء الحساب...' : 'إنشاء الحساب';
+      
+      if (isLoading) {
+        const spinner = document.createElement('div');
+        spinner.className = 'loading-spinner';
+        spinner.innerHTML = '<div class="loading"></div>';
+        submitBtn.appendChild(spinner);
+      }
+    }
+
+    function showError(message) {
+      errorDiv.textContent = message;
+      errorDiv.style.display = "block";
+      successDiv.style.display = "none";
+      errorDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    function showSuccess(message) {
+      successDiv.textContent = message;
+      successDiv.style.display = "block";
+      errorDiv.style.display = "none";
+    }
+
+    function validateForm(data) {
+      if (!data.firstName || !data.lastName) {
+        return { isValid: false, message: "يرجى إدخال الاسم الأول والأخير" };
+      }
+
+      if (!validateEmail(data.email)) {
+        return { isValid: false, message: "يرجى إدخال بريد إلكتروني صحيح" };
+      }
+
+      if (!validateSaudiPhone(data.phone)) {
+        return { isValid: false, message: "يرجى إدخال رقم هاتف سعودي صحيح (05XXXXXXXX)" };
+      }
+
+      if (!data.region || !data.gender) {
+        return { isValid: false, message: "يرجى اختيار المنطقة والجنس" };
+      }
+
+      if (data.password.length < 6) {
+        return { isValid: false, message: "كلمة المرور يجب أن تكون 6 أحرف على الأقل" };
+      }
+
+      if (data.password !== data.confirmPassword) {
+        return { isValid: false, message: "كلمات المرور غير متطابقة" };
+      }
+
+      return { isValid: true };
+    }
+
+    function validateField(e) {
+      const field = e.target;
+      const value = field.value.trim();
+
+      // Remove previous validation classes
+      field.classList.remove('valid', 'invalid');
+
+      if (!value && field.required) {
+        field.classList.add('invalid');
+        return;
+      }
+
+      if (field.type === 'email' && value) {
+        field.classList.add(validateEmail(value) ? 'valid' : 'invalid');
+      }
+
+      if (field.type === 'tel' && value) {
+        field.classList.add(validateSaudiPhone(value) ? 'valid' : 'invalid');
+      }
+
+      if (field.id === 'confirmPassword' && value) {
+        const match = value === passwordInput.value;
+        field.classList.add(match ? 'valid' : 'invalid');
+      }
+
+      if (value && field.required) {
+        field.classList.add('valid');
+      }
+    }
+
+    function validateEmail(email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email);
+    }
+
+    function validateSaudiPhone(phone) {
+      const phoneRegex = /^05\d{8}$/;
+      return phoneRegex.test(phone);
+    }
+
+    function checkPasswordStrength(password) {
+      if (password.length < 6) {
+        return { level: 'weak', message: 'كلمة المرور ضعيفة - يجب أن تكون 6 أحرف على الأقل' };
+      }
+
+      let score = 0;
+      if (password.length >= 8) score++;
+      if (/[a-z]/.test(password)) score++;
+      if (/[A-Z]/.test(password)) score++;
+      if (/[0-9]/.test(password)) score++;
+      if (/[^A-Za-z0-9]/.test(password)) score++;
+
+      if (score < 2) {
+        return { level: 'weak', message: 'كلمة المرور ضعيفة' };
+      } else if (score < 4) {
+        return { level: 'medium', message: 'كلمة المرور متوسطة القوة' };
+      } else {
+        return { level: 'strong', message: 'كلمة المرور قوية' };
+      }
+    }
+
+    function handleRegistrationError(error) {
+      let message;
+      switch (error.code) {
+        case 'auth/email-already-in-use':
+          message = "هذا البريد الإلكتروني مستخدم مسبقاً";
+          break;
+        case 'auth/invalid-email':
+          message = "البريد الإلكتروني غير صحيح";
+          break;
+        case 'auth/weak-password':
+          message = "كلمة المرور ضعيفة جداً";
+          break;
+        case 'auth/network-request-failed':
+          message = "خطأ في الاتصال بالإنترنت";
+          break;
+        default:
+          message = `حدث خطأ أثناء إنشاء الحساب: ${error.message}`;
+      }
+      showError(message);
+    }
+
+    console.log('🚀 صفحة التسجيل جاهزة');
+  </script>
 </body>
 </html>
