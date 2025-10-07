@@ -426,11 +426,11 @@
           lastLogin: serverTimestamp()
         });
 
-        showSuccess("✅ تم إنشاء الحساب بنجاح! جاري التوجيه...");
+        showSuccess("✅ تم إنشاء الحساب بنجاح! جاري التوجيه لصفحة توثيق المؤهلات...");
 
-        // Redirect to dashboard after success
+        // Redirect to qualifications page after success
         setTimeout(() => {
-          window.location.href = "index.html";
+          window.location.href = "qualifications.html";
         }, 2000);
 
       } catch (error) {
