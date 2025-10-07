@@ -430,10 +430,11 @@
 
         // Redirect to dashboard after success
         setTimeout(() => {
-          window.location.href = "dashboard.html";
+          window.location.href = "index.html";
         }, 2000);
 
       } catch (error) {
+        console.error("Registration error:", error);
         setLoading(false);
         handleRegistrationError(error);
       }
