@@ -113,9 +113,14 @@ body {
 /* ========== Hero Section ========== */
 .hero {
   position: relative;
-  background: url('https://i.postimg.cc/kMVvp5nR/IMG-1698.jpg');
+  background: linear-gradient(
+    135deg,
+    rgba(46, 125, 50, 0.8),
+    rgba(102, 187, 106, 0.7)
+  ), url('https://i.postimg.cc/kMVvp5nR/IMG-1698.jpg');
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
   background-attachment: fixed;
   height: 100vh;
   display: flex;
@@ -131,7 +136,7 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(0, 0, 0, 0.2);
 }
 
 .hero-overlay {
@@ -373,6 +378,8 @@ body {
   
   .hero {
     background-attachment: scroll;
+    min-height: 100vh;
+    background-position: center center;
   }
   
   .hero-overlay {
