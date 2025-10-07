@@ -143,55 +143,7 @@
         border: 2px solid #c3e6cb;
       }
 
-      .qualifications-display {
-        margin-top: 40px;
-      }
-
-      .qualification-card {
-        background: linear-gradient(135deg, #f8fdf9, #eaf4ec);
-        border: 2px solid #a5d6a7;
-        padding: 25px;
-        margin-bottom: 20px;
-        border-radius: 12px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-        transition: all 0.3s ease;
-      }
-
-      .qualification-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-      }
-
-      .qualification-card h3 {
-        color: var(--primary-color, #2e7d32);
-        margin-bottom: 15px;
-        font-size: 1.3rem;
-        font-weight: 600;
-      }
-
-      .qualification-card p {
-        margin: 8px 0;
-        color: #555;
-        font-size: 15px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-
-      .qualification-card .label {
-        font-weight: 600;
-        color: var(--primary-color, #2e7d32);
-      }
-
-      .no-qualifications {
-        text-align: center;
-        padding: 40px;
-        color: #666;
-        font-size: 1.1rem;
-        background: #f8f9fa;
-        border-radius: 10px;
-        border: 2px dashed #ddd;
-      }
+      
 
       .loading {
         display: none;
@@ -337,15 +289,7 @@
         <div>جاري الحفظ...</div>
       </div>
 
-      <!-- Display Saved Qualifications -->
-      <div class="qualifications-display">
-        <h2>المعلومات المحفوظة</h2>
-        <div id="qualifications-list">
-          <div class="no-qualifications">
-            لا توجد معلومات محفوظة بعد
-          </div>
-        </div>
-      </div>
+      
     </div>
 
     <script type="module">
@@ -382,15 +326,12 @@
       const message = document.getElementById("success-message");
       const loading = document.getElementById("loading");
       const submitBtn = document.getElementById("submitBtn");
-      const listContainer = document.getElementById("qualifications-list");
-
       onAuthStateChanged(auth, (user) => {
         if (!user) {
           window.location.href = "login.html";
           return;
         }
         currentUser = user;
-        loadUserData();
       });
 
       form.addEventListener("submit", async (e) => {
@@ -448,9 +389,6 @@
           // Show success message
           message.style.display = 'block';
           form.reset();
-          
-          // Reload data display
-          await loadUserData();
 
           // Redirect to opportunities page
           setTimeout(() => {
@@ -467,76 +405,7 @@
         }
       });
 
-      async function loadUserData() {
-        if (!currentUser) return;
-
-        try {
-          const userRef = doc(db, "users", currentUser.uid);
-          const userSnap = await getDoc(userRef);
-          
-          if (userSnap.exists()) {
-            const userData = userSnap.data();
-            displayUserData(userData);
-            
-            // Pre-fill form if data exists
-            if (userData.age) form.age.value = userData.age;
-            if (userData.region) form.region.value = userData.region;
-            if (userData.education) form.education.value = userData.education;
-            if (userData.specialization) form.specialization.value = userData.specialization;
-            if (userData.currentJob) form.currentJob.value = userData.currentJob;
-            if (userData.qualification) {
-              if (userData.qualification.title) form.title.value = userData.qualification.title;
-              if (userData.qualification.issuer) form.issuer.value = userData.qualification.issuer;
-              if (userData.qualification.date) form.date.value = userData.qualification.date;
-            }
-            if (userData.volunteered) form.volunteered.value = userData.volunteered;
-            if (userData.skills) form.skills.value = userData.skills.join(', ');
-            if (userData.interests) form.interests.value = userData.interests.join(', ');
-          }
-        } catch (error) {
-          console.error("Error loading user data:", error);
-        }
-      }
-
-      function displayUserData(userData) {
-        listContainer.innerHTML = '';
-
-        if (!userData || Object.keys(userData).length === 0) {
-          listContainer.innerHTML = '<div class="no-qualifications">لا توجد معلومات محفوظة بعد</div>';
-          return;
-        }
-
-        const card = document.createElement("div");
-        card.className = "qualification-card";
-        
-        let cardHTML = '<h3>معلوماتك الشخصية والمهنية</h3>';
-        
-        if (userData.age) cardHTML += `<p><span class="label">العمر:</span> <span>${userData.age} سنة</span></p>`;
-        if (userData.region) cardHTML += `<p><span class="label">المنطقة:</span> <span>${userData.region}</span></p>`;
-        if (userData.education) cardHTML += `<p><span class="label">المرحلة التعليمية:</span> <span>${userData.education}</span></p>`;
-        if (userData.specialization) cardHTML += `<p><span class="label">التخصص:</span> <span>${userData.specialization}</span></p>`;
-        if (userData.currentJob) cardHTML += `<p><span class="label">الوظيفة الحالية:</span> <span>${userData.currentJob}</span></p>`;
-        
-        if (userData.qualification) {
-          cardHTML += '<h3 style="margin-top: 25px;">المؤهلات والشهادات</h3>';
-          if (userData.qualification.title) cardHTML += `<p><span class="label">العنوان:</span> <span>${userData.qualification.title}</span></p>`;
-          if (userData.qualification.issuer) cardHTML += `<p><span class="label">الجهة المصدرة:</span> <span>${userData.qualification.issuer}</span></p>`;
-          if (userData.qualification.date) cardHTML += `<p><span class="label">تاريخ الإصدار:</span> <span>${userData.qualification.date}</span></p>`;
-        }
-        
-        if (userData.volunteered) cardHTML += `<p><span class="label">سبق له التطوع:</span> <span>${userData.volunteered}</span></p>`;
-        
-        if (userData.skills && userData.skills.length > 0) {
-          cardHTML += `<p><span class="label">المهارات:</span> <span>${userData.skills.join(', ')}</span></p>`;
-        }
-        
-        if (userData.interests && userData.interests.length > 0) {
-          cardHTML += `<p><span class="label">الاهتمامات التطوعية:</span> <span>${userData.interests.join(', ')}</span></p>`;
-        }
-
-        card.innerHTML = cardHTML;
-        listContainer.appendChild(card);
-      }
+      
 
       console.log('🚀 صفحة توثيق المؤهلات جاهزة');
     </script>
