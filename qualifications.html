@@ -263,18 +263,7 @@
           </div>
         </div>
 
-        <!-- Skills and Interests Section -->
-        <div class="form-section">
-          <h2>المهارات والاهتمامات</h2>
-          <div class="form-group full-width">
-            <label>المهارات (افصل بينها بفاصلة):</label>
-            <input type="text" name="skills" placeholder="مثال: التصميم الجرافيكي, البرمجة, التسويق الرقمي" />
-          </div>
-          <div class="form-group full-width">
-            <label>اهتماماتك التطوعية (افصل بينها بفاصلة):</label>
-            <input type="text" name="interests" placeholder="مثال: مساعدة المسنين, تعليم الأطفال, حماية البيئة" />
-          </div>
-        </div>
+        
 
         <button type="submit" class="btn" id="submitBtn">
           حفظ المعلومات والانتقال للفرص التطوعية
@@ -356,8 +345,6 @@
             date: formData.get('date'),
           },
           volunteered: formData.get('volunteered'),
-          skills: formData.get('skills').trim().split(',').map(s => s.trim()).filter(s => s),
-          interests: formData.get('interests').trim().split(',').map(s => s.trim()).filter(s => s),
           profileComplete: true,
           updatedAt: serverTimestamp()
         };
