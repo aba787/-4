@@ -235,7 +235,7 @@
         
 
         <button type="submit" class="btn" id="submitBtn">
-          حفظ المعلومات والانتقال للفرص التطوعية
+          حفظ المعلومات والانتقال للصفحة الرئيسية
         </button>
       </form>
 
@@ -342,9 +342,9 @@
           message.style.display = 'block';
           form.reset();
 
-          // Redirect to opportunities page
+          // Redirect to main user page
           setTimeout(() => {
-            window.location.href = "opportunities.html";
+            window.location.href = "index.html";
           }, 2000);
 
         } catch (error) {
@@ -353,7 +353,7 @@
         } finally {
           loading.style.display = 'none';
           submitBtn.disabled = false;
-          submitBtn.textContent = 'حفظ المعلومات والانتقال للفرص التطوعية';
+          submitBtn.textContent = 'حفظ المعلومات والانتقال للصفحة الرئيسية';
         }
       });
 
