@@ -1,155 +1,363 @@
-from pathlib import Path
 
-html_code = """
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>تسجيل جمعية</title>
+  <title>تسجيل جمعية - منصة مُمكّن</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
   <style>
     body {
-      font-family: 'Cairo', sans-serif;
-      background: #f9f9f9;
-      margin: 0;
-      padding: 0;
+      background: linear-gradient(135deg, #f8fdf9 0%, #e8f5e8 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
     }
     .container {
-      max-width: 400px;
-      margin: 40px auto;
-      background: #fff;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      max-width: 500px;
+      width: 100%;
+      background: var(--white);
+      padding: 40px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
     }
     h2 {
       text-align: center;
-      color: #008060;
+      color: var(--primary-color);
+      margin-bottom: 30px;
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+    .form-group {
+      margin-bottom: 20px;
     }
     label {
       display: block;
-      margin-top: 15px;
-      font-weight: bold;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--text-dark);
     }
     input, select, textarea {
       width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
+      padding: 15px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      font-size: 16px;
+      font-family: inherit;
+      transition: var(--transition);
+      background: #fafafa;
       box-sizing: border-box;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+      background: var(--white);
+    }
+    textarea {
+      resize: vertical;
+      min-height: 100px;
     }
     button {
       width: 100%;
-      background: #008060;
-      color: #fff;
+      background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+      color: var(--white);
       border: none;
-      padding: 12px;
-      margin-top: 20px;
-      border-radius: 8px;
-      font-size: 16px;
+      padding: 18px;
+      border-radius: 10px;
+      font-size: 18px;
+      font-weight: 600;
       cursor: pointer;
-    }
-    #error {
-      color: red;
+      transition: var(--transition);
       margin-top: 10px;
+    }
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(46, 125, 50, 0.3);
+    }
+    button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .message {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 10px;
+      font-weight: 600;
       text-align: center;
       display: none;
+    }
+    .message.success {
+      background: #d4edda;
+      color: #155724;
+      border: 2px solid #c3e6cb;
+    }
+    .message.error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 2px solid #f5c6cb;
+    }
+    .loading {
+      display: none;
+      margin: 10px auto;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #f3f3f3;
+      border-top: 2px solid var(--primary-color);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .back-link {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .back-link a {
+      color: var(--primary-color);
+      text-decoration: none;
+      font-weight: 600;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2>تسجيل جمعية</h2>
+    <h2>تسجيل جمعية خيرية</h2>
     <form id="associationForm">
-      <label>اسم الجمعية</label>
-      <input type="text" id="name" required />
+      <div class="form-group">
+        <label>اسم الجمعية *</label>
+        <input type="text" id="name" required placeholder="أدخل اسم الجمعية الرسمي" />
+      </div>
 
-      <label>البريد الإلكتروني</label>
-      <input type="email" id="email" required />
+      <div class="form-group">
+        <label>البريد الإلكتروني *</label>
+        <input type="email" id="email" required placeholder="example@charity.org" />
+      </div>
 
-      <label>كلمة المرور</label>
-      <input type="password" id="password" required />
+      <div class="form-group">
+        <label>كلمة المرور *</label>
+        <input type="password" id="password" required placeholder="كلمة مرور قوية (6 أحرف على الأقل)" />
+      </div>
 
-      <label>تأكيد كلمة المرور</label>
-      <input type="password" id="confirmPassword" required />
+      <div class="form-group">
+        <label>تأكيد كلمة المرور *</label>
+        <input type="password" id="confirmPassword" required placeholder="أعد كتابة كلمة المرور" />
+      </div>
 
-      <label>المنطقة</label>
-      <select id="region" required>
-        <option value="">اختر المنطقة</option>
-        <option value="الرياض">الرياض</option>
-        <option value="جدة">جدة</option>
-        <option value="مكة">مكة</option>
-        <option value="المدينة">المدينة</option>
-        <option value="الشرقية">المنطقة الشرقية</option>
-      </select>
+      <div class="form-group">
+        <label>رقم الترخيص *</label>
+        <input type="text" id="license" required placeholder="رقم ترخيص الجمعية الرسمي" />
+      </div>
 
-      <label>وصف الجمعية</label>
-      <textarea id="description" rows="3" required></textarea>
+      <div class="form-group">
+        <label>رقم الهاتف *</label>
+        <input type="tel" id="phone" required placeholder="05XXXXXXXX" />
+      </div>
 
-      <div id="error">حدث خطأ</div>
-      <button type="submit">تسجيل</button>
+      <div class="form-group">
+        <label>المنطقة *</label>
+        <select id="region" required>
+          <option value="">اختر المنطقة</option>
+          <option value="الرياض">الرياض</option>
+          <option value="جدة">جدة</option>
+          <option value="مكة">مكة المكرمة</option>
+          <option value="المدينة">المدينة المنورة</option>
+          <option value="الشرقية">المنطقة الشرقية</option>
+          <option value="عسير">عسير</option>
+          <option value="تبوك">تبوك</option>
+          <option value="حائل">حائل</option>
+          <option value="الحدود الشمالية">الحدود الشمالية</option>
+          <option value="جازان">جازان</option>
+          <option value="نجران">نجران</option>
+          <option value="الباحة">الباحة</option>
+          <option value="الجوف">الجوف</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>مجال العمل *</label>
+        <select id="field" required>
+          <option value="">اختر مجال العمل</option>
+          <option value="التعليم">التعليم والتدريب</option>
+          <option value="الصحة">الرعاية الصحية</option>
+          <option value="البيئة">حماية البيئة</option>
+          <option value="الاجتماعي">العمل الاجتماعي</option>
+          <option value="الثقافي">النشاط الثقافي</option>
+          <option value="الرياضي">الأنشطة الرياضية</option>
+          <option value="كبار السن">رعاية كبار السن</option>
+          <option value="الأطفال">رعاية الأطفال</option>
+          <option value="الإغاثة">الإغاثة والطوارئ</option>
+          <option value="أخرى">أخرى</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>وصف الجمعية وأهدافها *</label>
+        <textarea id="description" required placeholder="اكتب وصفاً مختصراً عن الجمعية وأهدافها وأنشطتها"></textarea>
+      </div>
+
+      <div class="loading" id="loading"></div>
+      <div class="message" id="message"></div>
+      <button type="submit" id="submitBtn">إرسال طلب التسجيل</button>
     </form>
+
+    <div class="back-link">
+      <a href="index.html">← العودة للصفحة الرئيسية</a>
+    </div>
   </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const firebaseConfig = {
-      apiKey: "AIzaSyAlMibtDbLAZLMhhJNho5Sih_qBfWxZyXI",
-      authDomain: "momaken-45ba9.firebaseapp.com",
-      projectId: "momaken-45ba9",
-      storageBucket: "momaken-45ba9.appspot.com",
-      messagingSenderId: "638133555280",
-      appId: "1:638133555280:web:c84bd87c15cabe55d30155"
+      apiKey: "AIzaSyALzVz48KJE596dLl7xXZbpfLsxDEHhLF0",
+      authDomain: "mumkin-d4855.firebaseapp.com",
+      projectId: "mumkin-d4855",
+      storageBucket: "mumkin-d4855.firebasestorage.app",
+      messagingSenderId: "910506834639",
+      appId: "1:910506834639:web:f4955bb2979fbe21ad15ba",
+      measurementId: "G-3ESCTR48BG"
     };
 
     const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
     const db = getFirestore(app);
 
     const form = document.getElementById("associationForm");
-    const errorDiv = document.getElementById("error");
+    const message = document.getElementById("message");
+    const loading = document.getElementById("loading");
+    const submitBtn = document.getElementById("submitBtn");
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
-      errorDiv.style.display = "none";
+      
+      // Reset previous messages
+      message.style.display = 'none';
+      message.className = 'message';
+      
+      // Get form data
+      const formData = {
+        name: document.getElementById("name").value.trim(),
+        email: document.getElementById("email").value.trim(),
+        password: document.getElementById("password").value.trim(),
+        confirmPassword: document.getElementById("confirmPassword").value.trim(),
+        license: document.getElementById("license").value.trim(),
+        phone: document.getElementById("phone").value.trim(),
+        region: document.getElementById("region").value.trim(),
+        field: document.getElementById("field").value.trim(),
+        description: document.getElementById("description").value.trim()
+      };
 
-      const name = document.getElementById("name").value.trim();
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value.trim();
-      const confirmPassword = document.getElementById("confirmPassword").value.trim();
-      const region = document.getElementById("region").value.trim();
-      const description = document.getElementById("description").value.trim();
+      // Validation
+      const requiredFields = ['name', 'email', 'password', 'confirmPassword', 'license', 'phone', 'region', 'field', 'description'];
+      const missingFields = requiredFields.filter(field => !formData[field]);
 
-      if (password !== confirmPassword || password.length < 6) {
-        errorDiv.textContent = "تأكد من كلمة المرور.";
-        errorDiv.style.display = "block";
+      if (missingFields.length > 0) {
+        showMessage("يرجى ملء جميع الحقول المطلوبة", 'error');
         return;
       }
 
+      if (formData.password !== formData.confirmPassword) {
+        showMessage("كلمة المرور وتأكيد كلمة المرور غير متطابقتين", 'error');
+        return;
+      }
+
+      if (formData.password.length < 6) {
+        showMessage("كلمة المرور يجب أن تكون 6 أحرف على الأقل", 'error');
+        return;
+      }
+
+      // Validate email format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(formData.email)) {
+        showMessage("يرجى إدخال بريد إلكتروني صحيح", 'error');
+        return;
+      }
+
+      // Validate phone number (Saudi format)
+      const phoneRegex = /^05[0-9]{8}$/;
+      if (!phoneRegex.test(formData.phone)) {
+        showMessage("يرجى إدخال رقم هاتف صحيح (05XXXXXXXX)", 'error');
+        return;
+      }
+
+      // Show loading
+      loading.style.display = 'block';
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'جاري الإرسال...';
+
       try {
-        const cred = await createUserWithEmailAndPassword(auth, email, password);
-        await setDoc(doc(db, "associations", cred.user.uid), {
-          name,
-          email,
-          region,
-          description,
+        // Save registration request to Firebase (pending approval)
+        const registrationData = {
+          name: formData.name,
+          email: formData.email,
+          password: formData.password, // In production, hash this before storing
+          license: formData.license,
+          phone: formData.phone,
+          region: formData.region,
+          field: formData.field,
+          description: formData.description,
+          status: 'pending', // pending, approved, rejected
+          submittedAt: serverTimestamp(),
+          type: 'association_registration'
+        };
+
+        // Add to registration requests collection
+        await addDoc(collection(db, "registrationRequests"), registrationData);
+
+        // Send notification to admin
+        await addDoc(collection(db, "notifications"), {
+          type: 'admin_notification',
+          title: 'طلب تسجيل جمعية جديد',
+          message: `تم تقديم طلب تسجيل جمعية جديدة: ${formData.name}`,
+          data: {
+            associationName: formData.name,
+            email: formData.email,
+            region: formData.region,
+            field: formData.field
+          },
+          isRead: false,
           createdAt: serverTimestamp()
         });
-        window.location.href = "admin-opportunities.html";
-      } catch (err) {
-        errorDiv.textContent = "خطأ: " + err.message;
-        errorDiv.style.display = "block";
+
+        showMessage('تم إرسال طلب التسجيل بنجاح! سيتم مراجعة الطلب والتواصل معكم خلال 2-3 أيام عمل على البريد الإلكتروني المسجل.', 'success');
+        form.reset();
+
+        // Redirect to homepage after 3 seconds
+        setTimeout(() => {
+          window.location.href = "index.html";
+        }, 3000);
+
+      } catch (error) {
+        console.error("Error submitting registration:", error);
+        showMessage('حدث خطأ أثناء إرسال الطلب. يرجى المحاولة مرة أخرى.', 'error');
+      } finally {
+        loading.style.display = 'none';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'إرسال طلب التسجيل';
       }
     });
+
+    function showMessage(text, type) {
+      message.textContent = text;
+      message.className = `message ${type}`;
+      message.style.display = 'block';
+      
+      // Auto hide error messages after 5 seconds
+      if (type === 'error') {
+        setTimeout(() => {
+          message.style.display = 'none';
+        }, 5000);
+      }
+    }
+
+    console.log('صفحة تسجيل الجمعيات جاهزة');
   </script>
 </body>
 </html>
-"""
-
-path = Path("/mnt/data/register-association.html")
-path.write_text(html_code, encoding="utf-8")
-path.name

@@ -1,130 +1,652 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>إدارة الفرص التطوعية</title>
-<style>
-body { font-family:'Cairo',sans-serif; background:#f5f7fa; padding:20px; }
-h1 { text-align:center; color:#004d40; }
-.container { max-width: 800px; margin:auto; }
-form, .opportunity-card { background:#fff; padding:20px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.1); margin-bottom:20px; }
-form label { display:block; margin-top:10px; font-weight:bold; }
-form input, form select, form textarea, form button { width:100%; padding:10px; margin-top:5px; border-radius:6px; border:1px solid #ccc; }
-form button { background:#004d40; color:#fff; border:none; cursor:pointer; margin-top:15px; }
-form button:hover { background:#00695c; }
-.opportunity-card h3 { margin:0; color:#333; }
-.opportunity-card p { margin:5px 0; }
-.opportunity-card button { background:red; color:white; border:none; padding:6px 12px; border-radius:6px; cursor:pointer; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة تحكم الجمعية - إدارة الفرص التطوعية</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      background: linear-gradient(135deg, #f8fdf9 0%, #e8f5e8 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .dashboard-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .dashboard-header {
+      background: var(--white);
+      padding: 30px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 30px;
+      text-align: center;
+    }
+    .dashboard-header h1 {
+      color: var(--primary-color);
+      font-size: 2.2rem;
+      margin-bottom: 10px;
+    }
+    .welcome-text {
+      color: var(--text-light);
+      font-size: 1.1rem;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    .stat-card {
+      background: var(--white);
+      padding: 25px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      text-align: center;
+      border-left: 5px solid var(--secondary-color);
+    }
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      margin-bottom: 10px;
+    }
+    .stat-label {
+      color: var(--text-light);
+      font-weight: 600;
+    }
+    .main-content {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 30px;
+    }
+    .form-section {
+      background: var(--white);
+      padding: 30px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      height: fit-content;
+    }
+    .form-section h2 {
+      color: var(--primary-color);
+      margin-bottom: 25px;
+      font-size: 1.5rem;
+      text-align: center;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 15px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      font-size: 16px;
+      font-family: inherit;
+      transition: var(--transition);
+      background: #fafafa;
+      box-sizing: border-box;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+      background: var(--white);
+    }
+    .form-group textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+    .btn-primary {
+      width: 100%;
+      background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+      color: var(--white);
+      border: none;
+      padding: 18px;
+      border-radius: 10px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(46, 125, 50, 0.3);
+    }
+    .btn-primary:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .opportunities-section {
+      background: var(--white);
+      padding: 30px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+    }
+    .opportunities-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+    .opportunities-header h2 {
+      color: var(--primary-color);
+      font-size: 1.5rem;
+    }
+    .opportunity-card {
+      background: #f8f9fa;
+      border: 2px solid #e9ecef;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      transition: var(--transition);
+      position: relative;
+    }
+    .opportunity-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(46, 125, 50, 0.1);
+      border-color: var(--secondary-color);
+    }
+    .opportunity-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: 10px;
+    }
+    .opportunity-meta {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+      margin-bottom: 15px;
+      font-size: 0.9rem;
+      color: var(--text-light);
+    }
+    .opportunity-description {
+      color: var(--text-light);
+      margin-bottom: 15px;
+      line-height: 1.6;
+    }
+    .opportunity-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .btn-edit {
+      background: var(--secondary-color);
+      color: white;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .btn-delete {
+      background: #dc3545;
+      color: white;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .btn-edit:hover,
+    .btn-delete:hover {
+      transform: translateY(-1px);
+    }
+    .no-opportunities {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-light);
+    }
+    .message {
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      font-weight: 600;
+      text-align: center;
+      display: none;
+    }
+    .message.success {
+      background: #d4edda;
+      color: #155724;
+      border: 2px solid #c3e6cb;
+    }
+    .message.error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 2px solid #f5c6cb;
+    }
+    .navbar-custom {
+      background: var(--white);
+      padding: 15px 30px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .nav-links a {
+      color: var(--text-dark);
+      text-decoration: none;
+      margin: 0 15px;
+      font-weight: 600;
+      transition: var(--transition);
+    }
+    .nav-links a:hover {
+      color: var(--primary-color);
+    }
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .btn-logout {
+      background: #dc3545;
+      color: white;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    @media (max-width: 768px) {
+      .main-content {
+        grid-template-columns: 1fr;
+      }
+      .dashboard-container {
+        padding: 10px;
+      }
+      .navbar-custom {
+        flex-direction: column;
+        gap: 15px;
+      }
+    }
+  </style>
 </head>
 <body>
+  <div class="dashboard-container">
+    <!-- Navigation -->
+    <nav class="navbar-custom">
+      <div class="nav-links">
+        <a href="admin-opportunities.html">الفرص التطوعية</a>
+        <a href="manage-applications.html">طلبات المتطوعين</a>
+        <a href="notifications.html">الإشعارات</a>
+      </div>
+      <div class="user-info">
+        <span id="associationName">جاري التحميل...</span>
+        <button class="btn-logout" onclick="logout()">تسجيل الخروج</button>
+      </div>
+    </nav>
 
-<div class="container">
-  <h1>إدارة الفرص التطوعية</h1>
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+      <h1>لوحة تحكم الجمعية</h1>
+      <p class="welcome-text">إدارة الفرص التطوعية ومتابعة المتطوعين</p>
+    </div>
 
-  <form id="opportunityForm">
-    <label>عنوان الفرصة</label>
-    <input type="text" id="title" required>
+    <!-- Statistics -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-number" id="totalOpportunities">0</div>
+        <div class="stat-label">إجمالي الفرص</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="activeOpportunities">0</div>
+        <div class="stat-label">الفرص النشطة</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="totalApplications">0</div>
+        <div class="stat-label">طلبات المتطوعين</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="approvedApplications">0</div>
+        <div class="stat-label">المتطوعون المقبولون</div>
+      </div>
+    </div>
 
-    <label>الوصف</label>
-    <textarea id="description" rows="4" required></textarea>
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Add Opportunity Form -->
+      <div class="form-section">
+        <h2>إضافة فرصة تطوعية جديدة</h2>
+        <div class="message" id="formMessage"></div>
+        <form id="opportunityForm">
+          <div class="form-group">
+            <label>عنوان الفرصة *</label>
+            <input type="text" id="title" required placeholder="أدخل عنواناً واضحاً للفرصة">
+          </div>
 
-    <label>المنطقة</label>
-    <select id="region" required>
-      <option value="">اختر المنطقة</option>
-      <option value="الرياض">الرياض</option>
-      <option value="جدة">جدة</option>
-      <option value="الدمام">الدمام</option>
-      <option value="مكة">مكة</option>
-      <option value="المدينة">المدينة</option>
-    </select>
+          <div class="form-group">
+            <label>الوصف التفصيلي *</label>
+            <textarea id="description" rows="4" required placeholder="اكتب وصفاً تفصيلياً للفرصة التطوعية والمهام المطلوبة"></textarea>
+          </div>
 
-    <label>الفئة</label>
-    <select id="category" required>
-      <option value="">اختر الفئة</option>
-      <option value="تعليم">تعليم</option>
-      <option value="صحة">صحة</option>
-      <option value="بيئة">بيئة</option>
-      <option value="اجتماعي">اجتماعي</option>
-    </select>
+          <div class="form-group">
+            <label>المنطقة *</label>
+            <select id="region" required>
+              <option value="">اختر المنطقة</option>
+              <option value="الرياض">الرياض</option>
+              <option value="جدة">جدة</option>
+              <option value="الدمام">الدمام</option>
+              <option value="مكة">مكة المكرمة</option>
+              <option value="المدينة">المدينة المنورة</option>
+              <option value="أبها">أبها</option>
+              <option value="تبوك">تبوك</option>
+              <option value="حائل">حائل</option>
+            </select>
+          </div>
 
-    <button type="submit">إضافة الفرصة</button>
-  </form>
+          <div class="form-group">
+            <label>الفئة *</label>
+            <select id="category" required>
+              <option value="">اختر الفئة</option>
+              <option value="تعليم">تعليم وتدريب</option>
+              <option value="صحة">رعاية صحية</option>
+              <option value="بيئة">حماية البيئة</option>
+              <option value="اجتماعي">عمل اجتماعي</option>
+              <option value="ثقافي">نشاط ثقافي</option>
+              <option value="رياضي">نشاط رياضي</option>
+              <option value="إغاثة">إغاثة وطوارئ</option>
+            </select>
+          </div>
 
-  <div id="opportunitiesList"></div>
-</div>
+          <div class="form-group">
+            <label>المدة المتوقعة</label>
+            <input type="text" id="duration" placeholder="مثال: 3 ساعات، يوم واحد، أسبوع">
+          </div>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+          <div class="form-group">
+            <label>المهارات المطلوبة</label>
+            <input type="text" id="skills" placeholder="مثال: التواصل، الحاسوب، اللغة الإنجليزية">
+          </div>
 
-const firebaseConfig = {
-  apiKey: "AIzaSyAlMibtDbLAZLMhhJNho5Sih_qBfWxZyXI",
-  authDomain: "momaken-45ba9.firebaseapp.com",
-  projectId: "momaken-45ba9",
-  storageBucket: "momaken-45ba9.appspot.com",
-  messagingSenderId: "638133555280",
-  appId: "1:638133555280:web:c84bd87c15cabe55d30155"
-};
+          <button type="submit" class="btn-primary" id="submitBtn">
+            إضافة الفرصة التطوعية
+          </button>
+        </form>
+      </div>
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+      <!-- Opportunities List -->
+      <div class="opportunities-section">
+        <div class="opportunities-header">
+          <h2>الفرص التطوعية المنشورة</h2>
+          <button class="btn-edit" onclick="refreshOpportunities()">🔄 تحديث</button>
+        </div>
+        <div id="opportunitiesList">
+          <div style="text-align: center; padding: 40px; color: var(--text-light);">
+            🔄 جاري تحميل الفرص التطوعية...
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-onAuthStateChanged(auth, async (user) => {
-  if (!user) return window.location.href = "login-association.html";
-  await loadOpportunities();
-});
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { 
+      getFirestore, 
+      collection, 
+      addDoc, 
+      getDocs, 
+      deleteDoc, 
+      doc, 
+      getDoc,
+      query,
+      where,
+      serverTimestamp 
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-document.getElementById("opportunityForm").addEventListener("submit", async e => {
-  e.preventDefault();
-  const title = document.getElementById("title").value.trim();
-  const description = document.getElementById("description").value.trim();
-  const region = document.getElementById("region").value;
-  const category = document.getElementById("category").value;
+    const firebaseConfig = {
+      apiKey: "AIzaSyALzVz48KJE596dLl7xXZbpfLsxDEHhLF0",
+      authDomain: "mumkin-d4855.firebaseapp.com",
+      projectId: "mumkin-d4855",
+      storageBucket: "mumkin-d4855.firebasestorage.app",
+      messagingSenderId: "910506834639",
+      appId: "1:910506834639:web:f4955bb2979fbe21ad15ba",
+      measurementId: "G-3ESCTR48BG"
+    };
 
-  if(!title || !description || !region || !category) return alert("يرجى تعبئة جميع الحقول");
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-  try {
-    await addDoc(collection(db, "opportunities"), {
-      title, description, region, category, createdAt: serverTimestamp(), associationId: auth.currentUser.uid
+    let currentUser = null;
+    let associationData = null;
+
+    // Authentication check
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = "login-association.html";
+        return;
+      }
+      
+      currentUser = user;
+      
+      // Get association data
+      try {
+        const assocDoc = await getDoc(doc(db, "associations", user.uid));
+        if (!assocDoc.exists()) {
+          alert("خطأ: لم يتم العثور على بيانات الجمعية");
+          await signOut(auth);
+          return;
+        }
+        
+        associationData = assocDoc.data();
+        document.getElementById('associationName').textContent = associationData.name;
+        
+        await loadOpportunities();
+        await loadStatistics();
+        
+      } catch (error) {
+        console.error("Error loading association data:", error);
+        alert("خطأ في تحميل بيانات الجمعية");
+      }
     });
-    alert("تم إضافة الفرصة بنجاح");
-    document.getElementById("opportunityForm").reset();
-    await loadOpportunities();
-  } catch (err) {
-    alert("خطأ: " + err.message);
-  }
-});
 
-async function loadOpportunities() {
-  const snapshot = await getDocs(collection(db, "opportunities"));
-  const container = document.getElementById("opportunitiesList");
-  container.innerHTML = "";
-  if(snapshot.empty) return container.innerHTML="<p>لا توجد فرص حالياً</p>";
+    // Form submission
+    document.getElementById("opportunityForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      
+      if (!currentUser) {
+        showMessage("خطأ: لم يتم تسجيل الدخول", 'error');
+        return;
+      }
 
-  snapshot.forEach(docSnap => {
-    const data = docSnap.data();
-    const card = document.createElement("div");
-    card.className="opportunity-card";
-    card.innerHTML = `
-      <h3>${data.title}</h3>
-      <p>${data.description}</p>
-      <p><strong>المنطقة:</strong> ${data.region}</p>
-      <p><strong>الفئة:</strong> ${data.category}</p>
-      <button onclick="deleteOpportunity('${docSnap.id}')">حذف</button>
-    `;
-    container.appendChild(card);
-  });
-}
+      const formData = {
+        title: document.getElementById("title").value.trim(),
+        description: document.getElementById("description").value.trim(),
+        region: document.getElementById("region").value,
+        category: document.getElementById("category").value,
+        duration: document.getElementById("duration").value.trim(),
+        skills: document.getElementById("skills").value.trim()
+      };
 
-window.deleteOpportunity = async id => {
-  if(!confirm("هل أنت متأكد؟")) return;
-  try { await deleteDoc(doc(db,"opportunities",id)); await loadOpportunities(); } 
-  catch(err){ alert("خطأ: "+err.message); }
-}
-</script>
+      // Validation
+      if (!formData.title || !formData.description || !formData.region || !formData.category) {
+        showMessage("يرجى ملء جميع الحقول المطلوبة (*)", 'error');
+        return;
+      }
+
+      const submitBtn = document.getElementById("submitBtn");
+      submitBtn.disabled = true;
+      submitBtn.textContent = "جاري الإضافة...";
+
+      try {
+        await addDoc(collection(db, "opportunities"), {
+          title: formData.title,
+          description: formData.description,
+          region: formData.region,
+          category: formData.category,
+          duration: formData.duration || null,
+          skills: formData.skills || null,
+          associationId: currentUser.uid,
+          associationName: associationData.name,
+          status: 'active',
+          createdAt: serverTimestamp(),
+          applicationsCount: 0
+        });
+
+        showMessage("✅ تم إضافة الفرصة التطوعية بنجاح!", 'success');
+        document.getElementById("opportunityForm").reset();
+        await loadOpportunities();
+        await loadStatistics();
+
+      } catch (error) {
+        console.error("Error adding opportunity:", error);
+        showMessage("حدث خطأ أثناء إضافة الفرصة", 'error');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "إضافة الفرصة التطوعية";
+      }
+    });
+
+    async function loadOpportunities() {
+      if (!currentUser) return;
+
+      try {
+        const q = query(
+          collection(db, "opportunities"), 
+          where("associationId", "==", currentUser.uid)
+        );
+        const snapshot = await getDocs(q);
+        
+        const container = document.getElementById("opportunitiesList");
+        
+        if (snapshot.empty) {
+          container.innerHTML = `
+            <div class="no-opportunities">
+              📋 لم تقم بإنشاء أي فرص تطوعية بعد<br>
+              <small>استخدم النموذج على اليسار لإضافة فرصة جديدة</small>
+            </div>
+          `;
+          return;
+        }
+
+        const opportunities = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+
+        container.innerHTML = opportunities.map(opp => `
+          <div class="opportunity-card">
+            <div class="opportunity-title">${opp.title}</div>
+            <div class="opportunity-meta">
+              <div><strong>المنطقة:</strong> ${opp.region}</div>
+              <div><strong>الفئة:</strong> ${opp.category}</div>
+              ${opp.duration ? `<div><strong>المدة:</strong> ${opp.duration}</div>` : ''}
+              <div><strong>تاريخ الإنشاء:</strong> ${opp.createdAt?.toDate?.()?.toLocaleDateString('ar-SA') || 'غير محدد'}</div>
+              <div><strong>عدد المتقدمين:</strong> ${opp.applicationsCount || 0}</div>
+            </div>
+            ${opp.skills ? `<div style="margin-bottom: 10px;"><strong>المهارات المطلوبة:</strong> ${opp.skills}</div>` : ''}
+            <div class="opportunity-description">${opp.description}</div>
+            <div class="opportunity-actions">
+              <button class="btn-edit" onclick="editOpportunity('${opp.id}')">✏️ تعديل</button>
+              <button class="btn-delete" onclick="deleteOpportunity('${opp.id}')">🗑️ حذف</button>
+              <button class="btn-edit" onclick="viewApplications('${opp.id}')">👥 المتقدمين</button>
+            </div>
+          </div>
+        `).join('');
+
+      } catch (error) {
+        console.error("Error loading opportunities:", error);
+        document.getElementById("opportunitiesList").innerHTML = 
+          '<div class="no-opportunities">حدث خطأ في تحميل الفرص التطوعية</div>';
+      }
+    }
+
+    async function loadStatistics() {
+      if (!currentUser) return;
+
+      try {
+        // Load opportunities stats
+        const oppQuery = query(collection(db, "opportunities"), where("associationId", "==", currentUser.uid));
+        const oppSnapshot = await getDocs(oppQuery);
+        
+        const totalOpps = oppSnapshot.size;
+        const activeOpps = oppSnapshot.docs.filter(doc => doc.data().status === 'active').length;
+
+        // Load applications stats
+        const appQuery = query(collection(db, "applications"), where("associationId", "==", currentUser.uid));
+        const appSnapshot = await getDocs(appQuery);
+        
+        const totalApps = appSnapshot.size;
+        const approvedApps = appSnapshot.docs.filter(doc => doc.data().status === 'approved').length;
+
+        document.getElementById('totalOpportunities').textContent = totalOpps;
+        document.getElementById('activeOpportunities').textContent = activeOpps;
+        document.getElementById('totalApplications').textContent = totalApps;
+        document.getElementById('approvedApplications').textContent = approvedApps;
+
+      } catch (error) {
+        console.error("Error loading statistics:", error);
+      }
+    }
+
+    function showMessage(text, type) {
+      const message = document.getElementById("formMessage");
+      message.textContent = text;
+      message.className = `message ${type}`;
+      message.style.display = 'block';
+      
+      setTimeout(() => {
+        message.style.display = 'none';
+      }, 5000);
+    }
+
+    // Global functions
+    window.refreshOpportunities = loadOpportunities;
+    
+    window.deleteOpportunity = async (oppId) => {
+      if (!confirm("هل أنت متأكد من حذف هذه الفرصة التطوعية؟")) return;
+      
+      try {
+        await deleteDoc(doc(db, "opportunities", oppId));
+        await loadOpportunities();
+        await loadStatistics();
+        alert("تم حذف الفرصة بنجاح");
+      } catch (error) {
+        console.error("Error deleting opportunity:", error);
+        alert("حدث خطأ أثناء حذف الفرصة");
+      }
+    };
+
+    window.editOpportunity = (oppId) => {
+      // This would open an edit form - simplified for now
+      alert("ميزة التعديل ستكون متاحة قريباً");
+    };
+
+    window.viewApplications = (oppId) => {
+      // Redirect to applications page for this opportunity
+      window.location.href = `manage-applications.html?opportunity=${oppId}`;
+    };
+
+    window.logout = async () => {
+      if (confirm('هل تريد تسجيل الخروج؟')) {
+        await signOut(auth);
+        window.location.href = 'index.html';
+      }
+    };
+
+    console.log('لوحة تحكم الجمعية جاهزة');
+  </script>
 </body>
 </html>
