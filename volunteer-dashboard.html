@@ -1,0 +1,255 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>لوحة المتطوع - منصة مُمكّن</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      background: linear-gradient(135deg, #f8fdf9 0%, #e8f5e8 100%);
+      min-height: 100vh;
+      padding-top: 80px;
+    }
+    .dashboard-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .welcome-section {
+      background: var(--white);
+      padding: 30px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 30px;
+      text-align: center;
+    }
+    .welcome-section h1 {
+      color: var(--primary-color);
+      font-size: 2rem;
+      margin-bottom: 15px;
+    }
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
+      margin-top: 30px;
+    }
+    .dashboard-card {
+      background: var(--white);
+      padding: 30px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      text-align: center;
+      transition: var(--transition);
+      cursor: pointer;
+    }
+    .dashboard-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(46, 125, 50, 0.15);
+    }
+    .card-icon {
+      font-size: 3rem;
+      margin-bottom: 20px;
+    }
+    .card-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: 10px;
+    }
+    .card-description {
+      color: var(--text-light);
+      font-size: 0.95rem;
+    }
+    .stats-section {
+      background: var(--white);
+      padding: 30px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 30px;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+    .stat-item {
+      text-align: center;
+      padding: 20px;
+      background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+      color: white;
+      border-radius: 12px;
+    }
+    .stat-number {
+      font-size: 2rem;
+      font-weight: bold;
+    }
+    .stat-label {
+      font-size: 0.9rem;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <header class="topbar">
+    <nav class="navbar">
+      <div class="nav-links">
+        <a href="volunteer-dashboard.html">لوحتي</a>
+        <a href="opportunities.html">الفرص التطوعية</a>
+        <a href="my-requests.html">طلباتي</a>
+        <a href="support.html">الدعم الفني</a>
+      </div>
+      <a href="#" id="loginLink" class="btn login-btn">تسجيل الخروج</a>
+    </nav>
+  </header>
+
+  <div class="dashboard-container">
+    <!-- Welcome Section -->
+    <div class="welcome-section">
+      <h1>مرحباً بك في رحلتك التطوعية! 🎉</h1>
+      <p>أهلاً <span id="userName">المتطوع الكريم</span>، نحن سعداء لانضمامك إلى منصة مُمكّن</p>
+    </div>
+
+    <!-- Statistics -->
+    <div class="stats-section">
+      <h2 style="color: var(--primary-color); margin-bottom: 20px; text-align: center;">إحصائياتك الشخصية</h2>
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-number" id="appliedOpportunities">0</div>
+          <div class="stat-label">الفرص التي تقدمت لها</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" id="acceptedApplications">0</div>
+          <div class="stat-label">الطلبات المقبولة</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" id="completedHours">0</div>
+          <div class="stat-label">ساعات التطوع</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" id="certificates">0</div>
+          <div class="stat-label">الشهادات المحصلة</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Actions -->
+    <div class="dashboard-grid">
+      <div class="dashboard-card" onclick="window.location.href='opportunities.html'">
+        <div class="card-icon">🎯</div>
+        <div class="card-title">تصفح الفرص التطوعية</div>
+        <div class="card-description">اكتشف الفرص المتاحة والمناسبة لمهاراتك واهتماماتك</div>
+      </div>
+
+      <div class="dashboard-card" onclick="window.location.href='my-requests.html'">
+        <div class="card-icon">📋</div>
+        <div class="card-title">طلباتي</div>
+        <div class="card-description">تابع حالة طلباتك وتقدمك في الفرص التطوعية</div>
+      </div>
+
+      <div class="dashboard-card" onclick="window.location.href='profile.html'">
+        <div class="card-icon">👤</div>
+        <div class="card-title">ملفي الشخصي</div>
+        <div class="card-description">عرض وتحديث معلوماتك الشخصية والمهنية</div>
+      </div>
+
+      <div class="dashboard-card" onclick="window.location.href='favorites.html'">
+        <div class="card-icon">❤️</div>
+        <div class="card-title">المفضلة</div>
+        <div class="card-description">الفرص التطوعية التي حفظتها للرجوع إليها لاحقاً</div>
+      </div>
+
+      <div class="dashboard-card" onclick="window.location.href='notifications.html'">
+        <div class="card-icon">🔔</div>
+        <div class="card-title">الإشعارات</div>
+        <div class="card-description">رسائل هامة وتحديثات حول أنشطتك التطوعية</div>
+      </div>
+
+      <div class="dashboard-card" onclick="window.location.href='support.html'">
+        <div class="card-icon">💬</div>
+        <div class="card-title">الدعم الفني</div>
+        <div class="card-description">تواصل معنا للحصول على المساعدة والدعم</div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFirestore, doc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyALzVz48KJE596dLl7xXZbpfLsxDEHhLF0",
+      authDomain: "mumkin-d4855.firebaseapp.com",
+      projectId: "mumkin-d4855",
+      storageBucket: "mumkin-d4855.firebasestorage.app",
+      messagingSenderId: "910506834639",
+      appId: "1:910506834639:web:f4955bb2979fbe21ad15ba",
+      measurementId: "G-3ESCTR48BG"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      // Load user data
+      try {
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          document.getElementById("userName").textContent = userData.fullName || user.displayName || "المتطوع الكريم";
+          
+          // Load user statistics
+          await loadStatistics(user.uid);
+        }
+      } catch (error) {
+        console.error("Error loading user data:", error);
+      }
+
+      // Setup logout
+      const loginLink = document.getElementById("loginLink");
+      loginLink.onclick = async (e) => {
+        e.preventDefault();
+        if (confirm('هل تريد تسجيل الخروج؟')) {
+          await signOut(auth);
+          window.location.href = "index.html";
+        }
+      };
+    });
+
+    async function loadStatistics(userId) {
+      try {
+        // Load applications count
+        const applicationsQuery = query(collection(db, "requests"), where("uid", "==", userId));
+        const applicationsSnapshot = await getDocs(applicationsQuery);
+        
+        const totalApplications = applicationsSnapshot.size;
+        const acceptedApplications = applicationsSnapshot.docs.filter(doc => 
+          doc.data().status === "مقبول" || doc.data().status === "approved"
+        ).length;
+
+        document.getElementById("appliedOpportunities").textContent = totalApplications;
+        document.getElementById("acceptedApplications").textContent = acceptedApplications;
+        
+        // For now, set these as placeholders - you can implement actual tracking later
+        document.getElementById("completedHours").textContent = acceptedApplications * 3; // Estimated hours
+        document.getElementById("certificates").textContent = Math.floor(acceptedApplications / 3); // One certificate per 3 completed opportunities
+
+      } catch (error) {
+        console.error("Error loading statistics:", error);
+      }
+    }
+
+    console.log('لوحة المتطوع جاهزة');
+  </script>
+</body>
+</html>
