@@ -467,15 +467,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyALzVz48KJE596dLl7xXZbpfLsxDEHhLF0",
-      authDomain: "mumkin-d4855.firebaseapp.com",
-      projectId: "mumkin-d4855",
-      storageBucket: "mumkin-d4855.firebasestorage.app",
-      messagingSenderId: "910506834639",
-      appId: "1:910506834639:web:f4955bb2979fbe21ad15ba",
-      measurementId: "G-3ESCTR48BG"
-    };
+    import { firebaseConfig } from './firebase-config.js';
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
