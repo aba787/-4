@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -6,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>تسجيل الدخول - منصة مُمكّن</title>
   <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
   <style>
     body {
       font-family: 'Cairo', sans-serif;
@@ -15,375 +15,160 @@
       align-items: center;
       min-height: 100vh;
       padding: 20px;
+      margin: 0;
     }
-    .login-container {
+    .auth-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+    }
+    .auth-card {
+      background-color: white;
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      text-align: center;
       max-width: 450px;
       width: 100%;
-      background: var(--white);
-      padding: 40px;
-      border-radius: var(--border-radius);
-      box-shadow: var(--shadow);
-      position: relative;
     }
-    h1 {
-      text-align: center;
-      color: var(--primary-color);
-      margin-bottom: 30px;
+    .auth-card h2 {
+      color: #2e7d32; /* Primary color equivalent */
+      margin-bottom: 10px;
       font-size: 2rem;
       font-weight: 700;
     }
-    .form-group { 
-      margin-bottom: 25px; 
-      position: relative;
-    }
-    .form-group label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 600;
-      color: var(--text-dark);
+    .auth-card p {
+      color: #757575; /* Text light equivalent */
+      margin-bottom: 30px;
       font-size: 1rem;
     }
-    .form-group input {
+    .input-group {
+      margin-bottom: 20px;
+      position: relative;
+    }
+    .input-group input {
       width: 100%;
       padding: 15px;
       border: 2px solid #e0e0e0;
       border-radius: 10px;
       font-size: 16px;
       font-family: inherit;
-      transition: var(--transition);
+      transition: border-color 0.3s, box-shadow 0.3s;
       background: #fafafa;
     }
-    .form-group input:focus {
+    .input-group input:focus {
       outline: none;
-      border-color: var(--primary-color);
+      border-color: #2e7d32; /* Primary color */
       box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
-      background: var(--white);
+      background: white;
     }
-    .password-container {
-      position: relative;
-    }
-    .toggle-password {
-      position: absolute;
-      left: 15px;
-      top: 50%;
-      transform: translateY(-50%);
-      cursor: pointer;
-      font-size: 18px;
-      color: var(--text-light);
-      transition: var(--transition);
-    }
-    .toggle-password:hover {
-      color: var(--primary-color);
+    .message {
+      margin-top: 15px;
+      display: none; /* Initially hidden */
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: 500;
+      text-align: center;
     }
     .btn-submit {
       width: 100%;
       padding: 18px;
-      background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
-      color: var(--white);
+      background: linear-gradient(45deg, #2e7d32, #66bb6a); /* Primary to secondary gradient */
+      color: white;
       border: none;
       border-radius: 10px;
       font-size: 18px;
       font-weight: 600;
       cursor: pointer;
-      transition: var(--transition);
+      transition: all 0.3s ease;
       position: relative;
       overflow: hidden;
-    }
-    .btn-submit::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-      transition: var(--transition);
-    }
-    .btn-submit:hover::before {
-      left: 100%;
     }
     .btn-submit:hover {
       transform: translateY(-2px);
       box-shadow: 0 10px 25px rgba(46, 125, 50, 0.3);
     }
-    .btn-submit:disabled {
-      background: #ccc;
-      cursor: not-allowed;
-      transform: none;
-    }
-    .loading-spinner {
-      display: none;
-      margin-left: 10px;
-    }
-    .error { 
-      color: #f44336; 
-      margin-top: 15px; 
-      display: none; 
+    .links {
       text-align: center;
-      background: #ffebee;
-      padding: 12px;
-      border-radius: 8px;
-      border: 1px solid #ffcdd2;
-      font-weight: 500;
-    }
-    .success {
-      color: #2e7d32;
-      margin-top: 15px;
-      display: none;
-      text-align: center;
-      background: #e8f5e9;
-      padding: 12px;
-      border-radius: 8px;
-      border: 1px solid #c8e6c9;
-      font-weight: 500;
-    }
-    .links { 
-      text-align: center; 
-      margin-top: 25px; 
+      margin-top: 25px;
     }
     .links p {
       margin: 10px 0;
     }
     .links a {
-      color: var(--primary-color);
+      color: #2e7d32; /* Primary color */
       text-decoration: none;
       font-weight: 600;
-      transition: var(--transition);
+      transition: color 0.3s ease;
     }
-    .links a:hover { 
+    .links a:hover {
+      color: #66bb6a; /* Secondary color */
       text-decoration: underline;
-      color: var(--secondary-color);
     }
-    .forgot-password {
-      text-align: center;
-      margin-top: 15px;
-    }
-    .forgot-password a {
-      color: var(--text-light);
-      font-size: 0.9rem;
-    }
-    
+
     @media (max-width: 480px) {
-      .login-container {
+      .auth-card {
         padding: 30px 25px;
         margin: 10px;
       }
-      h1 {
+      .auth-card h2 {
         font-size: 1.8rem;
       }
     }
   </style>
 </head>
 <body>
-  <div class="login-container">
-    <h1>تسجيل الدخول</h1>
+  <div class="auth-container">
+    <div class="auth-card">
+      <h2>مرحباً بعودتك</h2>
+      <p>سجل دخولك لمتابعة رحلتك التطوعية</p>
 
-    <form id="loginForm">
-      <div class="form-group">
-        <label for="email">البريد الإلكتروني</label>
-        <input type="email" id="email" required placeholder="example@email.com" />
-      </div>
-
-      <div class="form-group">
-        <label for="password">كلمة المرور</label>
-        <div class="password-container">
-          <input type="password" id="password" required placeholder="أدخل كلمة المرور" />
-          <span id="togglePassword" class="toggle-password">👁️</span>
+      <form id="loginForm">
+        <div class="input-group">
+          <input type="email" id="email" required placeholder="البريد الإلكتروني" />
         </div>
-      </div>
 
-      <div class="forgot-password">
-        <a href="#" onclick="resetPassword()">نسيت كلمة المرور؟</a>
-      </div>
-
-      <button type="submit" id="submitBtn" class="btn-submit">
-        دخول
-        <div class="loading-spinner" id="loadingSpinner">
-          <div class="loading"></div>
+        <div class="input-group">
+          <input type="password" id="password" required placeholder="كلمة المرور" />
         </div>
-      </button>
-      
-      <div id="error" class="error"></div>
-      <div id="success" class="success"></div>
-    </form>
 
-    <div class="links">
-      <p><a href="register.html">إنشاء حساب جديد</a></p>
-      <p><a href="login-association.html">دخول الجمعيات</a></p>
-      <p><a href="index.html">العودة للرئيسية</a></p>
+        <div class="message" id="message"></div>
+
+        <button type="submit" class="btn-submit">تسجيل الدخول</button>
+      </form>
+
+      <div class="links">
+        <p><a href="register.html">ليس لديك حساب؟ سجل الآن</a></p>
+        <p><a href="index.html">العودة للرئيسية</a></p>
+      </div>
     </div>
   </div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyALzVz48KJE596dLl7xXZbpfLsxDEHhLF0",
-      authDomain: "mumkin-d4855.firebaseapp.com",
-      projectId: "mumkin-d4855",
-      storageBucket: "mumkin-d4855.firebasestorage.app",
-      messagingSenderId: "910506834639",
-      appId: "1:910506834639:web:f4955bb2979fbe21ad15ba",
-      measurementId: "G-3ESCTR48BG"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-
-    // Elements
-    const form = document.getElementById("loginForm");
-    const emailInput = document.getElementById("email");
-    const passwordInput = document.getElementById("password");
-    const submitBtn = document.getElementById("submitBtn");
-    const loadingSpinner = document.getElementById("loadingSpinner");
-    const errorDiv = document.getElementById("error");
-    const successDiv = document.getElementById("success");
-    const togglePassword = document.getElementById("togglePassword");
-
-    // Toggle password visibility
-    togglePassword.addEventListener("click", () => {
-      const type = passwordInput.type === "password" ? "text" : "password";
-      passwordInput.type = type;
-      togglePassword.textContent = type === "password" ? "👁️" : "🙈";
-    });
-
-    // Check if user is already logged in
-    onAuthStateChanged(auth, (user) => {
-      if (user && window.location.pathname.includes('login.html')) {
-        window.location.href = "volunteer-dashboard.html";
-      }
-    });
-
-    // Login form handler
-    form.addEventListener("submit", async (e) => {
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
       e.preventDefault();
 
-      const email = emailInput.value.trim();
-      const password = passwordInput.value.trim();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const messageDiv = document.getElementById('message');
 
-      // Reset messages
-      errorDiv.style.display = "none";
-      successDiv.style.display = "none";
-
-      // Validation
+      // Simple validation
       if (!email || !password) {
-        showError("يرجى ملء جميع الحقول المطلوبة");
+        messageDiv.innerHTML = '<p style="color: red;">يرجى ملء جميع الحقول</p>';
+        messageDiv.style.display = 'block';
         return;
       }
 
-      if (!validateEmail(email)) {
-        showError("يرجى إدخال بريد إلكتروني صحيح");
-        return;
-      }
+      // Simulate successful login
+      localStorage.setItem('currentUser', email.split('@')[0]);
+      messageDiv.innerHTML = '<p style="color: green;">تم تسجيل الدخول بنجاح!</p>';
+      messageDiv.style.display = 'block';
 
-      // Show loading
-      setLoading(true);
-
-      try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        
-        showSuccess("تم تسجيل الدخول بنجاح! جاري التوجيه...");
-        
-        // Redirect after success
-        setTimeout(() => {
-          window.location.href = "volunteer-dashboard.html";
-        }, 1500);
-
-      } catch (error) {
-        setLoading(false);
-        handleLoginError(error);
-      }
+      setTimeout(() => {
+        window.location.href = 'volunteer-dashboard.html';
+      }, 1000);
     });
-
-    // Helper functions
-    function setLoading(isLoading) {
-      submitBtn.disabled = isLoading;
-      loadingSpinner.style.display = isLoading ? 'inline-block' : 'none';
-      submitBtn.textContent = isLoading ? 'جاري تسجيل الدخول...' : 'دخول';
-      
-      if (isLoading) {
-        const spinner = document.createElement('div');
-        spinner.className = 'loading-spinner';
-        spinner.innerHTML = '<div class="loading"></div>';
-        submitBtn.appendChild(spinner);
-      }
-    }
-
-    function showError(message) {
-      errorDiv.textContent = message;
-      errorDiv.style.display = "block";
-      successDiv.style.display = "none";
-    }
-
-    function showSuccess(message) {
-      successDiv.textContent = message;
-      successDiv.style.display = "block";
-      errorDiv.style.display = "none";
-    }
-
-    function validateEmail(email) {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      return emailRegex.test(email);
-    }
-
-    function handleLoginError(error) {
-      let message;
-      switch (error.code) {
-        case 'auth/user-not-found':
-          message = "لا يوجد حساب بهذا البريد الإلكتروني";
-          break;
-        case 'auth/wrong-password':
-          message = "كلمة المرور غير صحيحة";
-          break;
-        case 'auth/invalid-email':
-          message = "البريد الإلكتروني غير صحيح";
-          break;
-        case 'auth/user-disabled':
-          message = "تم تعطيل هذا الحساب";
-          break;
-        case 'auth/too-many-requests':
-          message = "تم حظر الحساب مؤقتاً بسبب محاولات متعددة. حاول لاحقاً";
-          break;
-        case 'auth/network-request-failed':
-          message = "خطأ في الاتصال بالإنترنت";
-          break;
-        case 'auth/invalid-credential':
-          message = "بيانات الدخول غير صحيحة";
-          break;
-        default:
-          message = `حدث خطأ: ${error.message}`;
-      }
-      showError(message);
-    }
-
-    // Password reset function
-    window.resetPassword = async function() {
-      const email = emailInput.value.trim();
-      
-      if (!email) {
-        showError("يرجى إدخال البريد الإلكتروني أولاً");
-        return;
-      }
-
-      if (!validateEmail(email)) {
-        showError("يرجى إدخال بريد إلكتروني صحيح");
-        return;
-      }
-
-      try {
-        await sendPasswordResetEmail(auth, email);
-        showSuccess("تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني");
-      } catch (error) {
-        if (error.code === 'auth/user-not-found') {
-          showError("لا يوجد حساب بهذا البريد الإلكتروني");
-        } else {
-          showError("حدث خطأ أثناء إرسال رابط إعادة التعيين");
-        }
-      }
-    };
-
-    console.log('🚀 صفحة تسجيل الدخول جاهزة');
   </script>
 </body>
 </html>

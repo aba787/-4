@@ -328,8 +328,81 @@ document.addEventListener("click", async e=>{
     </div>
   </div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  <script>
+    // Static data for GitHub Pages
+    const staticOpportunities = [
+      {
+        id: 1,
+        title: "تطوع في تعليم الأطفال",
+        organization: "جمعية الأطفال الخيرية",
+        location: "الرياض",
+        category: "تعليم",
+        description: "مساعدة في تعليم الأطفال المحتاجين",
+        date: "2024-01-15",
+        duration: "يومين",
+        requirements: "خبرة في التعليم"
+      },
+      {
+        id: 2,
+        title: "مساعدة في توزيع الطعام",
+        organization: "بنك الطعام الخيري",
+        location: "جدة",
+        category: "مساعدات",
+        description: "توزيع الوجبات على المحتاجين",
+        date: "2024-01-20",
+        duration: "يوم واحد",
+        requirements: "لا توجد متطلبات خاصة"
+      },
+      {
+        id: 3,
+        title: "رعاية كبار السن",
+        organization: "دار المسنين",
+        location: "الدمام",
+        category: "صحة",
+        description: "قضاء وقت مع كبار السن وتقديم الرعاية",
+        date: "2024-01-25",
+        duration: "نصف يوم",
+        requirements: "صبر ولطف في التعامل"
+      }
+    ];
+
+    function loadOpportunities() {
+      const container = document.getElementById('opportunitiesContainer');
+      if (!container) return;
+
+      container.innerHTML = '';
+
+      staticOpportunities.forEach(opp => {
+        const card = document.createElement('div');
+        card.className = 'opportunity-card';
+        card.innerHTML = `
+          <h3>${opp.title}</h3>
+          <p><strong>الجمعية:</strong> ${opp.organization}</p>
+          <p><strong>الموقع:</strong> ${opp.location}</p>
+          <p><strong>الفئة:</strong> ${opp.category}</p>
+          <p><strong>الوصف:</strong> ${opp.description}</p>
+          <p><strong>التاريخ:</strong> ${opp.date}</p>
+          <p><strong>المدة:</strong> ${opp.duration}</p>
+          <p><strong>المتطلبات:</strong> ${opp.requirements}</p>
+          <button onclick="applyForOpportunity(${opp.id})" class="btn">تقدم للفرصة</button>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function applyForOpportunity(id) {
+      const currentUser = localStorage.getItem('currentUser');
+      if (!currentUser) {
+        alert('يرجى تسجيل الدخول أولاً');
+        window.location.href = 'login.html';
+        return;
+      }
+      
+      alert('تم التقدم للفرصة بنجاح! سيتم التواصل معك قريباً.');
+    }
+
+    // Load opportunities when page loads
+    document.addEventListener('DOMContentLoaded', loadOpportunities);
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
     import { getFirestore, collection, getDocs, addDoc, serverTimestamp, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 

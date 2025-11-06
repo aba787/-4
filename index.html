@@ -132,52 +132,23 @@
     <div class="loading"></div>
   </div>
 
-  <!-- Firebase -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  <!-- Simplified JavaScript for GitHub Pages -->
+  <script>
+    // Simple authentication simulation for GitHub Pages
+    const loginLink = document.getElementById("loginLink");
+    const currentUser = localStorage.getItem('currentUser');
 
-    // Firebase Configuration
-    const firebaseConfig = {
-      apiKey: "AIzaSyALzVz48KJE596dLl7xXZbpfLsxDEHhLF0",
-      authDomain: "mumkin-d4855.firebaseapp.com",
-      projectId: "mumkin-d4855",
-      storageBucket: "mumkin-d4855.firebasestorage.app",
-      messagingSenderId: "910506834639",
-      appId: "1:910506834639:web:f4955bb2979fbe21ad15ba",
-      measurementId: "G-3ESCTR48BG"
-    };
-
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-
-    // Authentication State Management
-    onAuthStateChanged(auth, (user) => {
-      const loginLink = document.getElementById("loginLink");
-
-      if (user) {
-        // User is signed in
-        if (loginLink) {
-          loginLink.innerHTML = `<span style="margin-left: 8px;">👋</span> مرحباً، ${user.displayName || user.email.split('@')[0]}`;
-          loginLink.href = "#";
-          loginLink.onclick = async (e) => {
-            e.preventDefault();
-            if (confirm('هل تريد تسجيل الخروج؟')) {
-              await signOut(auth);
-              window.location.reload();
-            }
-          };
+    if (currentUser) {
+      loginLink.innerHTML = `<span style="margin-left: 8px;">👋</span> مرحباً، ${currentUser}`;
+      loginLink.href = "#";
+      loginLink.onclick = (e) => {
+        e.preventDefault();
+        if (confirm('هل تريد تسجيل الخروج؟')) {
+          localStorage.removeItem('currentUser');
+          window.location.reload();
         }
-      } else {
-        // User is signed out
-        if (loginLink) {
-          loginLink.innerHTML = 'تسجيل الدخول';
-          loginLink.href = "login.html";
-          loginLink.onclick = null;
-        }
-      }
-    });
+      };
+    }
 
     // Smooth scrolling for internal links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
