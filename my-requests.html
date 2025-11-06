@@ -88,3 +88,232 @@ onSnapshot(q, snapshot => {
 
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>طلباتي - منصة مُمكّن</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      background: linear-gradient(135deg, #f8fdf9 0%, #e8f5e8 100%);
+      min-height: 100vh;
+      padding-top: 80px;
+    }
+    .requests-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .page-header {
+      background: var(--white);
+      padding: 30px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 30px;
+      text-align: center;
+    }
+    .page-header h1 {
+      color: var(--primary-color);
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+    .requests-list {
+      display: grid;
+      gap: 20px;
+    }
+    .request-card {
+      background: var(--white);
+      padding: 25px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+    }
+    .request-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(46, 125, 50, 0.15);
+    }
+    .request-status {
+      display: inline-block;
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .status-pending {
+      background: #fff3cd;
+      color: #856404;
+    }
+    .status-approved {
+      background: #d1ecf1;
+      color: #0c5460;
+    }
+    .status-rejected {
+      background: #f8d7da;
+      color: #721c24;
+    }
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-light);
+    }
+    .empty-state h3 {
+      color: var(--primary-color);
+      margin-bottom: 15px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <header class="topbar">
+    <nav class="navbar">
+      <div class="nav-links">
+        <a href="volunteer-dashboard.html">لوحتي</a>
+        <a href="opportunities.html">الفرص التطوعية</a>
+        <a href="my-requests.html" class="active">طلباتي</a>
+        <a href="support.html">الدعم الفني</a>
+      </div>
+      <a href="#" id="loginLink" class="btn login-btn">تسجيل الخروج</a>
+    </nav>
+  </header>
+
+  <div class="requests-container">
+    <div class="page-header">
+      <h1>طلباتي التطوعية</h1>
+      <p>متابعة حالة الطلبات التي تقدمت بها للفرص التطوعية</p>
+    </div>
+
+    <div class="requests-list" id="requestsList">
+      <div class="empty-state">
+        <h3>لا توجد طلبات حتى الآن</h3>
+        <p>عندما تتقدم لفرص تطوعية ستظهر هنا</p>
+        <a href="opportunities.html" class="btn" style="margin-top: 20px; display: inline-block; padding: 12px 24px;">تصفح الفرص التطوعية</a>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFirestore, collection, query, where, getDocs, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyALzVz48KJE596dLl7xXZbpfLsxDEHhLF0",
+      authDomain: "mumkin-d4855.firebaseapp.com",
+      projectId: "mumkin-d4855",
+      storageBucket: "mumkin-d4855.firebasestorage.app",
+      messagingSenderId: "910506834639",
+      appId: "1:910506834639:web:f4955bb2979fbe21ad15ba",
+      measurementId: "G-3ESCTR48BG"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      await loadUserRequests(user.uid);
+
+      // Setup logout
+      const loginLink = document.getElementById("loginLink");
+      loginLink.onclick = async (e) => {
+        e.preventDefault();
+        if (confirm('هل تريد تسجيل الخروج؟')) {
+          await signOut(auth);
+          window.location.href = "index.html";
+        }
+      };
+    });
+
+    async function loadUserRequests(userId) {
+      try {
+        const requestsList = document.getElementById("requestsList");
+        requestsList.innerHTML = '<div style="text-align: center; padding: 40px;">جاري التحميل...</div>';
+
+        const requestsQuery = query(
+          collection(db, "requests"), 
+          where("uid", "==", userId),
+          orderBy("createdAt", "desc")
+        );
+        
+        const querySnapshot = await getDocs(requestsQuery);
+        
+        if (querySnapshot.empty) {
+          requestsList.innerHTML = `
+            <div class="empty-state">
+              <h3>لا توجد طلبات حتى الآن</h3>
+              <p>عندما تتقدم لفرص تطوعية ستظهر هنا</p>
+              <a href="opportunities.html" class="btn" style="margin-top: 20px; display: inline-block; padding: 12px 24px;">تصفح الفرص التطوعية</a>
+            </div>
+          `;
+          return;
+        }
+
+        let html = '';
+        querySnapshot.forEach((doc) => {
+          const request = doc.data();
+          const statusClass = getStatusClass(request.status);
+          const statusText = getStatusText(request.status);
+          
+          html += `
+            <div class="request-card">
+              <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px;">
+                <h3 style="color: var(--primary-color); margin: 0;">${request.opportunityTitle || 'فرصة تطوعية'}</h3>
+                <span class="request-status ${statusClass}">${statusText}</span>
+              </div>
+              <p style="color: var(--text-light); margin: 8px 0;"><strong>الجمعية:</strong> ${request.associationName || 'غير محدد'}</p>
+              <p style="color: var(--text-light); margin: 8px 0;"><strong>تاريخ التقديم:</strong> ${request.createdAt ? new Date(request.createdAt.toDate()).toLocaleDateString('ar-SA') : 'غير محدد'}</p>
+              ${request.message ? `<p style="color: var(--text-light); margin: 8px 0;"><strong>رسالتك:</strong> ${request.message}</p>` : ''}
+            </div>
+          `;
+        });
+
+        requestsList.innerHTML = html;
+
+      } catch (error) {
+        console.error("Error loading requests:", error);
+        document.getElementById("requestsList").innerHTML = `
+          <div class="empty-state">
+            <h3>حدث خطأ أثناء تحميل الطلبات</h3>
+            <p>يرجى المحاولة مرة أخرى</p>
+          </div>
+        `;
+      }
+    }
+
+    function getStatusClass(status) {
+      switch (status) {
+        case 'مقبول':
+        case 'approved':
+          return 'status-approved';
+        case 'مرفوض':
+        case 'rejected':
+          return 'status-rejected';
+        default:
+          return 'status-pending';
+      }
+    }
+
+    function getStatusText(status) {
+      switch (status) {
+        case 'مقبول':
+        case 'approved':
+          return 'مقبول';
+        case 'مرفوض':
+        case 'rejected':
+          return 'مرفوض';
+        default:
+          return 'قيد المراجعة';
+      }
+    }
+
+    console.log('صفحة طلباتي جاهزة');
+  </script>
+</body>
+</html>

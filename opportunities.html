@@ -163,3 +163,333 @@ document.addEventListener("click", async e=>{
 </script>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>الفرص التطوعية - منصة مُمكّن</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      background: linear-gradient(135deg, #f8fdf9 0%, #e8f5e8 100%);
+      min-height: 100vh;
+      padding-top: 80px;
+    }
+    .opportunities-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .page-header {
+      background: var(--white);
+      padding: 30px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 30px;
+      text-align: center;
+    }
+    .page-header h1 {
+      color: var(--primary-color);
+      font-size: 2.2rem;
+      margin-bottom: 15px;
+    }
+    .opportunities-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 25px;
+    }
+    .opportunity-card {
+      background: var(--white);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: var(--transition);
+      position: relative;
+    }
+    .opportunity-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 35px rgba(46, 125, 50, 0.15);
+    }
+    .opportunity-image {
+      height: 200px;
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      color: white;
+    }
+    .opportunity-content {
+      padding: 25px;
+    }
+    .opportunity-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      margin-bottom: 10px;
+    }
+    .opportunity-association {
+      color: var(--text-light);
+      font-size: 0.9rem;
+      margin-bottom: 15px;
+    }
+    .opportunity-description {
+      color: var(--text-dark);
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+    .opportunity-details {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 20px;
+      font-size: 0.9rem;
+    }
+    .detail-item {
+      display: flex;
+      align-items: center;
+      color: var(--text-light);
+    }
+    .detail-icon {
+      margin-left: 8px;
+      color: var(--secondary-color);
+    }
+    .apply-btn {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+      color: var(--white);
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .apply-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(46, 125, 50, 0.3);
+    }
+    .empty-state {
+      text-align: center;
+      padding: 80px 20px;
+      background: var(--white);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+    }
+    .loading {
+      text-align: center;
+      padding: 60px;
+      font-size: 1.1rem;
+      color: var(--text-light);
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <header class="topbar">
+    <nav class="navbar">
+      <div class="nav-links">
+        <a href="volunteer-dashboard.html">لوحتي</a>
+        <a href="opportunities.html" class="active">الفرص التطوعية</a>
+        <a href="my-requests.html">طلباتي</a>
+        <a href="support.html">الدعم الفني</a>
+      </div>
+      <a href="#" id="loginLink" class="btn login-btn">تسجيل الخروج</a>
+    </nav>
+  </header>
+
+  <div class="opportunities-container">
+    <div class="page-header">
+      <h1>الفرص التطوعية المتاحة</h1>
+      <p>اختر الفرصة التطوعية المناسبة لك وابدأ رحلتك في خدمة المجتمع</p>
+    </div>
+
+    <div class="opportunities-grid" id="opportunitiesGrid">
+      <div class="loading">جاري تحميل الفرص التطوعية...</div>
+    </div>
+  </div>
+
+  <!-- Application Modal -->
+  <div id="applicationModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 10000; padding: 20px;">
+    <div style="max-width: 500px; margin: 50px auto; background: white; border-radius: 12px; padding: 30px; max-height: 80vh; overflow-y: auto;">
+      <h2 style="color: var(--primary-color); margin-bottom: 20px;">التقدم للفرصة التطوعية</h2>
+      <form id="applicationForm">
+        <div style="margin-bottom: 20px;">
+          <label style="display: block; margin-bottom: 8px; font-weight: 600;">رسالة التقديم (اختياري):</label>
+          <textarea id="applicationMessage" rows="4" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; resize: vertical;" placeholder="اكتب رسالة قصيرة عن سبب اهتمامك بهذه الفرصة..."></textarea>
+        </div>
+        <div style="display: flex; gap: 15px;">
+          <button type="submit" style="flex: 1; padding: 12px; background: var(--primary-color); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">إرسال الطلب</button>
+          <button type="button" onclick="closeApplicationModal()" style="flex: 1; padding: 12px; background: #ccc; color: #666; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">إلغاء</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFirestore, collection, getDocs, addDoc, serverTimestamp, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyALzVz48KJE596dLl7xXZbpfLsxDEHhLF0",
+      authDomain: "mumkin-d4855.firebaseapp.com",
+      projectId: "mumkin-d4855",
+      storageBucket: "mumkin-d4855.firebasestorage.app",
+      messagingSenderId: "910506834639",
+      appId: "1:910506834639:web:f4955bb2979fbe21ad15ba",
+      measurementId: "G-3ESCTR48BG"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let currentUser = null;
+    let selectedOpportunity = null;
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      currentUser = user;
+      await loadOpportunities();
+
+      // Setup logout
+      const loginLink = document.getElementById("loginLink");
+      loginLink.onclick = async (e) => {
+        e.preventDefault();
+        if (confirm('هل تريد تسجيل الخروج؟')) {
+          await signOut(auth);
+          window.location.href = "index.html";
+        }
+      };
+    });
+
+    async function loadOpportunities() {
+      try {
+        const opportunitiesGrid = document.getElementById("opportunitiesGrid");
+        
+        const querySnapshot = await getDocs(collection(db, "opportunities"));
+        
+        if (querySnapshot.empty) {
+          opportunitiesGrid.innerHTML = `
+            <div class="empty-state" style="grid-column: 1 / -1;">
+              <h3 style="color: var(--primary-color); margin-bottom: 15px;">لا توجد فرص تطوعية متاحة حالياً</h3>
+              <p style="color: var(--text-light);">تابعنا للاطلاع على الفرص الجديدة</p>
+            </div>
+          `;
+          return;
+        }
+
+        let html = '';
+        querySnapshot.forEach((doc) => {
+          const opportunity = doc.data();
+          const opportunityId = doc.id;
+          
+          html += createOpportunityCard(opportunity, opportunityId);
+        });
+
+        opportunitiesGrid.innerHTML = html;
+
+      } catch (error) {
+        console.error("Error loading opportunities:", error);
+        document.getElementById("opportunitiesGrid").innerHTML = `
+          <div class="empty-state" style="grid-column: 1 / -1;">
+            <h3 style="color: #f44336;">حدث خطأ في تحميل الفرص التطوعية</h3>
+            <p>يرجى إعادة تحميل الصفحة</p>
+          </div>
+        `;
+      }
+    }
+
+    function createOpportunityCard(opportunity, id) {
+      const icons = ['🌍', '❤️', '🎓', '🌱', '🏥', '👥', '🎨', '⚽'];
+      const randomIcon = icons[Math.floor(Math.random() * icons.length)];
+      
+      return `
+        <div class="opportunity-card">
+          <div class="opportunity-image">${randomIcon}</div>
+          <div class="opportunity-content">
+            <div class="opportunity-title">${opportunity.title || 'فرصة تطوعية'}</div>
+            <div class="opportunity-association">📍 ${opportunity.associationName || 'جمعية خيرية'}</div>
+            <div class="opportunity-description">${opportunity.description || 'وصف الفرصة التطوعية...'}</div>
+            <div class="opportunity-details">
+              <div class="detail-item">
+                <span class="detail-icon">📅</span>
+                <span>${opportunity.date || 'تاريخ مفتوح'}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-icon">⏰</span>
+                <span>${opportunity.duration || 'غير محدد'}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-icon">📍</span>
+                <span>${opportunity.location || 'متعدد'}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-icon">👥</span>
+                <span>${opportunity.requiredVolunteers || 'مفتوح'} متطوع</span>
+              </div>
+            </div>
+            <button class="apply-btn" onclick="openApplicationModal('${id}', '${opportunity.title}', '${opportunity.associationName}')">
+              التقدم للفرصة
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    window.openApplicationModal = function(opportunityId, title, associationName) {
+      selectedOpportunity = { id: opportunityId, title, associationName };
+      document.getElementById("applicationModal").style.display = "block";
+    }
+
+    window.closeApplicationModal = function() {
+      document.getElementById("applicationModal").style.display = "none";
+      selectedOpportunity = null;
+      document.getElementById("applicationForm").reset();
+    }
+
+    // Application form submission
+    document.getElementById("applicationForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      
+      if (!currentUser || !selectedOpportunity) return;
+
+      try {
+        const message = document.getElementById("applicationMessage").value.trim();
+        
+        // Get user data
+        const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+        const userData = userDoc.exists() ? userDoc.data() : {};
+
+        // Submit application
+        await addDoc(collection(db, "requests"), {
+          uid: currentUser.uid,
+          userEmail: currentUser.email,
+          userName: userData.fullName || userData.firstName + ' ' + userData.lastName || 'متطوع',
+          opportunityId: selectedOpportunity.id,
+          opportunityTitle: selectedOpportunity.title,
+          associationName: selectedOpportunity.associationName,
+          message: message,
+          status: 'قيد المراجعة',
+          createdAt: serverTimestamp()
+        });
+
+        alert("تم إرسال طلبك بنجاح! ستصلك رسالة على البريد الإلكتروني عند المراجعة.");
+        closeApplicationModal();
+
+      } catch (error) {
+        console.error("Error submitting application:", error);
+        alert("حدث خطأ أثناء إرسال الطلب. يرجى المحاولة مرة أخرى.");
+      }
+    });
+
+    console.log('صفحة الفرص التطوعية جاهزة');
+  </script>
+</body>
+</html>

@@ -708,3 +708,175 @@
   <script src="script.js" defer></script>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>المساعدة - منصة مُمكّن</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #f8fdf9 0%, #e8f5e8 100%);
+      min-height: 100vh;
+      padding-top: 80px;
+    }
+    .help-container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .page-header {
+      background: var(--white);
+      padding: 40px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 30px;
+      text-align: center;
+    }
+    .help-section {
+      background: var(--white);
+      margin-bottom: 25px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .help-section h3 {
+      background: var(--primary-color);
+      color: white;
+      padding: 20px;
+      margin: 0;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .help-section h3:hover {
+      background: var(--dark-green);
+    }
+    .help-content {
+      padding: 25px;
+      display: none;
+    }
+    .help-content.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <header class="topbar">
+    <nav class="navbar">
+      <div class="nav-links">
+        <a href="index.html">الرئيسية</a>
+        <a href="opportunities.html">الفرص التطوعية</a>
+        <a href="support.html">الدعم الفني</a>
+        <a href="help.html" class="active">المساعدة</a>
+      </div>
+      <a href="login.html" class="btn login-btn">تسجيل الدخول</a>
+    </nav>
+  </header>
+
+  <div class="help-container">
+    <div class="page-header">
+      <h1>مركز المساعدة</h1>
+      <p>كل ما تحتاج معرفته عن استخدام منصة مُمكّن</p>
+    </div>
+
+    <div class="help-section">
+      <h3 onclick="toggleHelp(this)">كيف أنشئ حساب جديد؟</h3>
+      <div class="help-content">
+        <p>لإنشاء حساب جديد:</p>
+        <ol>
+          <li>انقر على "ابدأ رحلتك التطوعية" من الصفحة الرئيسية</li>
+          <li>املأ المعلومات المطلوبة (الاسم، البريد الإلكتروني، رقم الهاتف، إلخ)</li>
+          <li>اختر كلمة مرور قوية</li>
+          <li>انقر "إنشاء الحساب"</li>
+          <li>ستنتقل لصفحة توثيق المؤهلات لاستكمال ملفك الشخصي</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="help-section">
+      <h3 onclick="toggleHelp(this)">كيف أتقدم لفرصة تطوعية؟</h3>
+      <div class="help-content">
+        <p>للتقدم لفرصة تطوعية:</p>
+        <ol>
+          <li>سجل دخولك إلى حسابك</li>
+          <li>اذهب إلى "الفرص التطوعية"</li>
+          <li>اختر الفرصة التي تهمك</li>
+          <li>انقر على "التقدم للفرصة"</li>
+          <li>اكتب رسالة تقديم (اختياري)</li>
+          <li>انقر "إرسال الطلب"</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="help-section">
+      <h3 onclick="toggleHelp(this)">كيف أتابع طلباتي؟</h3>
+      <div class="help-content">
+        <p>يمكنك متابعة طلباتك من خلال:</p>
+        <ul>
+          <li>الذهاب إلى لوحة التحكم</li>
+          <li>النقر على "طلباتي"</li>
+          <li>ستجد جميع الطلبات مع حالتها (قيد المراجعة، مقبول، مرفوض)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="help-section">
+      <h3 onclick="toggleHelp(this)">كيف أحدث معلوماتي الشخصية؟</h3>
+      <div class="help-content">
+        <p>لتحديث معلوماتك:</p>
+        <ol>
+          <li>سجل دخولك</li>
+          <li>اذهب إلى "ملفي الشخصي"</li>
+          <li>عدل المعلومات التي تريد تحديثها</li>
+          <li>انقر "حفظ المعلومات"</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="help-section">
+      <h3 onclick="toggleHelp(this)">كيف أتواصل مع الدعم الفني؟</h3>
+      <div class="help-content">
+        <p>للتواصل مع فريق الدعم:</p>
+        <ul>
+          <li>اذهب إلى صفحة "الدعم الفني"</li>
+          <li>املأ نموذج التواصل</li>
+          <li>أو راسلنا على: rtyu@gmail.com</li>
+          <li>سنرد عليك خلال 24 ساعة</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="help-section">
+      <h3 onclick="toggleHelp(this)">هل التطوع مجاني؟</h3>
+      <div class="help-content">
+        <p>نعم! جميع الخدمات على منصة مُمكّن مجانية تماماً:</p>
+        <ul>
+          <li>إنشاء الحساب مجاني</li>
+          <li>التقدم للفرص التطوعية مجاني</li>
+          <li>الحصول على الشهادات مجاني</li>
+          <li>جميع الميزات متاحة بدون رسوم</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toggleHelp(element) {
+      const content = element.nextElementSibling;
+      const isActive = content.classList.contains('active');
+      
+      // Close all help sections
+      document.querySelectorAll('.help-content').forEach(section => {
+        section.classList.remove('active');
+      });
+      
+      // Open clicked section if it wasn't active
+      if (!isActive) {
+        content.classList.add('active');
+      }
+    }
+  </script>
+</body>
+</html>
