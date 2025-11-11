@@ -60,14 +60,7 @@
       serverTimestamp
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyAlMibtDbLAZLMhhJNho5Sih_qBfWxZyXI",
-      authDomain: "momaken-45ba9.firebaseapp.com",
-      projectId: "momaken-45ba9",
-      storageBucket: "momaken-45ba9.appspot.com",
-      messagingSenderId: "638133555280",
-      appId: "1:638133555280:web:c84bd87c15cabe55d30155"
-    };
+    import { firebaseConfig } from './firebase-config.js';
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
