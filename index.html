@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -127,73 +128,133 @@
     </div>
   </section>
 
-  <!-- Loading Overlay -->
-  <div id="loadingOverlay" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.9); z-index: 9999; display: flex; align-items: center; justify-content: center;">
-    <div class="loading"></div>
-  </div>
-
-  <!-- Simplified JavaScript for GitHub Pages -->
+  <!-- Main JavaScript with Firebase -->
   <script>
-    // Simple authentication simulation for GitHub Pages
-    const loginLink = document.getElementById("loginLink");
-    const currentUser = localStorage.getItem('currentUser');
-
-    if (currentUser) {
-      loginLink.innerHTML = `<span style="margin-left: 8px;">👋</span> مرحباً، ${currentUser}`;
-      loginLink.href = "#";
-      loginLink.onclick = (e) => {
-        e.preventDefault();
-        if (confirm('هل تريد تسجيل الخروج؟')) {
-          localStorage.removeItem('currentUser');
-          window.location.reload();
-        }
-      };
-    }
-
-    // Smooth scrolling for internal links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      });
-    });
-
-    // Add scroll effect to navbar
-    window.addEventListener('scroll', () => {
-      const navbar = document.querySelector('.topbar');
-      if (window.scrollY > 50) {
-        navbar.style.background = 'linear-gradient(135deg, rgba(46, 125, 50, 0.95), rgba(102, 187, 106, 0.95))';
-        navbar.style.backdropFilter = 'blur(10px)';
-      } else {
-        navbar.style.background = 'linear-gradient(135deg, var(--primary-color), var(--secondary-color))';
-        navbar.style.backdropFilter = 'none';
-      }
-    });
-
-    // Animate numbers on scroll
-    const observerOptions = {
-      threshold: 0.5,
-      rootMargin: '0px 0px -50px 0px'
+    console.log('🚀 بدء تحميل منصة مُمكّن...');
+    
+    // إعدادات Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyALzVz48KJE596dLl7xXZbpfLsxDEHhLF0",
+      authDomain: "mumkin-d4855.firebaseapp.com", 
+      projectId: "mumkin-d4855",
+      storageBucket: "mumkin-d4855.firebasestorage.app",
+      messagingSenderId: "910506834639",
+      appId: "1:910506834639:web:f4955bb2979fbe21ad15ba",
+      measurementId: "G-3ESCTR48BG"
     };
 
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const element = entry.target;
-          const finalNumber = parseInt(element.textContent.replace(/,/g, ''));
-          animateNumber(element, finalNumber);
-          observer.unobserve(element);
+    // تحميل Firebase والبدء
+    async function initializeApp() {
+      try {
+        // تحميل Firebase modules
+        const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
+        const { getAuth, onAuthStateChanged } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+        const { getFirestore } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
+
+        // تهيئة Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        console.log('✅ Firebase محمل بنجاح');
+
+        // فحص حالة المستخدم
+        const loginLink = document.getElementById("loginLink");
+        const currentUser = localStorage.getItem('currentUser');
+
+        if (currentUser) {
+          loginLink.innerHTML = `<span style="margin-left: 8px;">👋</span> مرحباً، ${currentUser}`;
+          loginLink.href = "#";
+          loginLink.onclick = (e) => {
+            e.preventDefault();
+            if (confirm('هل تريد تسجيل الخروج؟')) {
+              localStorage.removeItem('currentUser');
+              window.location.reload();
+            }
+          };
+        }
+
+        // بدء التفاعلات
+        initializeInteractions();
+        
+      } catch (error) {
+        console.error('خطأ في تحميل Firebase:', error);
+        // المتابعة بدون Firebase
+        initializeBasicFunctions();
+      }
+    }
+
+    // التفاعلات الأساسية للموقع
+    function initializeInteractions() {
+      // تأثير التمرير على النافبار
+      window.addEventListener('scroll', () => {
+        const navbar = document.querySelector('.topbar');
+        if (window.scrollY > 50) {
+          navbar.style.background = 'linear-gradient(135deg, rgba(46, 125, 50, 0.95), rgba(102, 187, 106, 0.95))';
+          navbar.style.backdropFilter = 'blur(10px)';
+        } else {
+          navbar.style.background = 'linear-gradient(135deg, var(--primary-color), var(--secondary-color))';
+          navbar.style.backdropFilter = 'none';
         }
       });
-    }, observerOptions);
 
-    document.querySelectorAll('.number').forEach(el => {
-      observer.observe(el);
-    });
+      // تحريك الأرقام
+      const observerOptions = {
+        threshold: 0.5,
+        rootMargin: '0px 0px -50px 0px'
+      };
 
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const element = entry.target;
+            const finalNumber = parseInt(element.textContent.replace(/,/g, ''));
+            animateNumber(element, finalNumber);
+            observer.unobserve(element);
+          }
+        });
+      }, observerOptions);
+
+      document.querySelectorAll('.number').forEach(el => {
+        observer.observe(el);
+      });
+
+      // التمرير السلس
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute('href'));
+          if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        });
+      });
+
+      console.log('✅ التفاعلات محملة بنجاح');
+    }
+
+    // الوظائف الأساسية بدون Firebase
+    function initializeBasicFunctions() {
+      const loginLink = document.getElementById("loginLink");
+      const currentUser = localStorage.getItem('currentUser');
+
+      if (currentUser) {
+        loginLink.innerHTML = `<span style="margin-left: 8px;">👋</span> مرحباً، ${currentUser}`;
+        loginLink.href = "#";
+        loginLink.onclick = (e) => {
+          e.preventDefault();
+          if (confirm('هل تريد تسجيل الخروج؟')) {
+            localStorage.removeItem('currentUser');
+            window.location.reload();
+          }
+        };
+      }
+
+      initializeInteractions();
+      console.log('⚠️ التشغيل في الوضع الأساسي (بدون Firebase)');
+    }
+
+    // تحريك الأرقام
     function animateNumber(element, target) {
       let current = 0;
       const increment = target / 100;
@@ -206,9 +267,22 @@
         element.textContent = Math.floor(current).toLocaleString('ar-SA');
       }, 20);
     }
-  </script>
 
-  <!-- Lightweight Script -->
-  <script src="script-light.js" defer></script>
+    // بدء تشغيل الموقع
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('📋 DOM جاهز، بدء تحميل الموقع...');
+      initializeApp();
+    });
+
+    // رسالة الاستعداد
+    window.addEventListener('load', () => {
+      console.log('🎉 منصة مُمكّن جاهزة للاستخدام!');
+      
+      // إشعار للمطور فقط
+      if (window.location.hostname.includes('replit')) {
+        console.log('🔧 يعمل على Replit - جميع الميزات متاحة');
+      }
+    });
+  </script>
 </body>
 </html>
