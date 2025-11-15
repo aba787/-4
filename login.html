@@ -133,9 +133,17 @@
           <input type="password" id="password" required placeholder="كلمة المرور" />
         </div>
 
+        <div class="input-group" id="verificationGroup" style="display: none;">
+          <input type="text" id="verificationCode" placeholder="رمز التحقق (تم إرساله لبريدك)" maxlength="6" />
+          <small style="color: var(--text-light); margin-top: 5px; display: block;">
+            تحقق من بريدك الإلكتروني أو رسائل الهاتف
+          </small>
+        </div>
+
         <div class="message" id="message"></div>
 
-        <button type="submit" class="btn-submit">تسجيل الدخول</button>
+        <button type="submit" class="btn-submit" id="loginBtn">تسجيل الدخول</button>
+        <button type="button" class="btn-submit" id="verifyBtn" style="display: none; background: var(--secondary-color);">تأكيد الدخول</button>
       </form>
 
       <div class="links">
@@ -146,6 +154,9 @@
   </div>
 
   <script>
+    let verificationSent = false;
+    let generatedCode = '';
+
     document.getElementById('loginForm').addEventListener('submit', function(e) {
       e.preventDefault();
 
@@ -160,14 +171,44 @@
         return;
       }
 
-      // Simulate successful login
-      localStorage.setItem('currentUser', email.split('@')[0]);
-      messageDiv.innerHTML = '<p style="color: green;">تم تسجيل الدخول بنجاح!</p>';
-      messageDiv.style.display = 'block';
+      if (!verificationSent) {
+        // Send verification code
+        generatedCode = Math.floor(100000 + Math.random() * 900000).toString();
+        
+        // Show verification step
+        document.getElementById('verificationGroup').style.display = 'block';
+        document.getElementById('loginBtn').style.display = 'none';
+        document.getElementById('verifyBtn').style.display = 'block';
+        
+        messageDiv.innerHTML = '<p style="color: blue;">تم إرسال رمز التحقق إلى بريدك الإلكتروني: ' + generatedCode + '</p>';
+        messageDiv.style.display = 'block';
+        verificationSent = true;
+      }
+    });
 
-      setTimeout(() => {
-        window.location.href = 'volunteer-dashboard.html';
-      }, 1000);
+    document.getElementById('verifyBtn').addEventListener('click', function() {
+      const enteredCode = document.getElementById('verificationCode').value;
+      const messageDiv = document.getElementById('message');
+      const email = document.getElementById('email').value;
+
+      if (!enteredCode) {
+        messageDiv.innerHTML = '<p style="color: red;">يرجى إدخال رمز التحقق</p>';
+        messageDiv.style.display = 'block';
+        return;
+      }
+
+      if (enteredCode === generatedCode) {
+        localStorage.setItem('currentUser', email.split('@')[0]);
+        messageDiv.innerHTML = '<p style="color: green;">✅ تم التحقق بنجاح! جاري التوجيه...</p>';
+        messageDiv.style.display = 'block';
+
+        setTimeout(() => {
+          window.location.href = 'volunteer-dashboard.html';
+        }, 1000);
+      } else {
+        messageDiv.innerHTML = '<p style="color: red;">❌ رمز التحقق غير صحيح</p>';
+        messageDiv.style.display = 'block';
+      }
     });
   </script>
 </body>

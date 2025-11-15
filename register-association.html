@@ -1,10 +1,10 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>تسجيل جمعية - منصة مُمكّن</title>
+  <title>تسجيل منشأة - منصة مُمكّن</title>
+  <meta name="description" content="تسجيل منشأة خيرية جديدة في منصة مُمكّن للعمل التطوعي">
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
   <style>
@@ -128,16 +128,18 @@
 </head>
 <body>
   <div class="container">
-    <h2>تسجيل جمعية خيرية</h2>
+    <h2>تسجيل منشأة خيرية</h2>
     <form id="associationForm">
       <div class="form-group">
-        <label>اسم الجمعية *</label>
-        <input type="text" id="name" required placeholder="أدخل اسم الجمعية الرسمي" />
+        <label>اسم المنشأة *</label>
+        <input type="text" id="name" required placeholder="أدخل اسم المنشأة الرسمي" />
       </div>
 
       <div class="form-group">
         <label>البريد الإلكتروني *</label>
         <input type="email" id="email" required placeholder="example@charity.org" />
+        <button type="button" id="sendVerificationCodeBtn" style="width: auto; margin-top: 10px; padding: 10px 15px; font-size: 14px;">إرسال رمز التحقق</button>
+        <input type="text" id="verificationCode" placeholder="أدخل رمز التحقق" style="display: none; margin-top: 10px;" />
       </div>
 
       <div class="form-group">
@@ -152,12 +154,14 @@
 
       <div class="form-group">
         <label>رقم الترخيص *</label>
-        <input type="text" id="license" required placeholder="رقم ترخيص الجمعية الرسمي" />
+        <input type="text" id="license" required placeholder="رقم ترخيص المنشأة الرسمي" />
       </div>
 
       <div class="form-group">
         <label>رقم الهاتف *</label>
         <input type="tel" id="phone" required placeholder="05XXXXXXXX" />
+        <button type="button" id="sendSmsCodeBtn" style="width: auto; margin-top: 10px; padding: 10px 15px; font-size: 14px;">إرسال رمز التحقق</button>
+        <input type="text" id="smsVerificationCode" placeholder="أدخل رمز التحقق" style="display: none; margin-top: 10px;" />
       </div>
 
       <div class="form-group">
@@ -198,8 +202,8 @@
       </div>
 
       <div class="form-group">
-        <label>وصف الجمعية وأهدافها *</label>
-        <textarea id="description" required placeholder="اكتب وصفاً مختصراً عن الجمعية وأهدافها وأنشطتها"></textarea>
+        <label>وصف المنشأة وأهدافها *</label>
+        <textarea id="description" required placeholder="اكتب وصفاً مختصراً عن المنشأة وأهدافها وأنشطتها"></textarea>
       </div>
 
       <div class="loading" id="loading"></div>
@@ -215,7 +219,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
+    // Dummy Firebase config, replace with your actual config
     const firebaseConfig = {
       apiKey: "AIzaSyALzVz48KJE596dLl7xXZbpfLsxDEHhLF0",
       authDomain: "mumkin-d4855.firebaseapp.com",
@@ -233,25 +237,64 @@
     const message = document.getElementById("message");
     const loading = document.getElementById("loading");
     const submitBtn = document.getElementById("submitBtn");
+    const emailInput = document.getElementById("email");
+    const sendVerificationCodeBtn = document.getElementById("sendVerificationCodeBtn");
+    const verificationCodeInput = document.getElementById("verificationCode");
+    const phoneInput = document.getElementById("phone");
+    const sendSmsCodeBtn = document.getElementById("sendSmsCodeBtn");
+    const smsVerificationCodeInput = document.getElementById("smsVerificationCode");
+
+    let emailVerified = false;
+    let phoneVerified = false;
+
+    sendVerificationCodeBtn.addEventListener("click", () => {
+      const email = emailInput.value.trim();
+      if (!email) {
+        showMessage("الرجاء إدخال البريد الإلكتروني أولاً.", "error");
+        return;
+      }
+      // In a real app, you would send a verification code to the email here
+      // For this example, we'll just simulate it
+      showMessage("تم إرسال رمز التحقق إلى بريدك الإلكتروني.", "success");
+      verificationCodeInput.style.display = 'block';
+      sendVerificationCodeBtn.textContent = "إعادة إرسال";
+      sendVerificationCodeBtn.style.display = 'none'; // Hide after sending once
+    });
+
+    sendSmsCodeBtn.addEventListener("click", () => {
+      const phone = phoneInput.value.trim();
+      if (!phone) {
+        showMessage("الرجاء إدخال رقم الهاتف أولاً.", "error");
+        return;
+      }
+      // In a real app, you would send a verification code to the phone number here
+      // For this example, we'll just simulate it
+      showMessage("تم إرسال رمز التحقق إلى رقم هاتفك.", "success");
+      smsVerificationCodeInput.style.display = 'block';
+      sendSmsCodeBtn.textContent = "إعادة إرسال";
+      sendSmsCodeBtn.style.display = 'none'; // Hide after sending once
+    });
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
-      
+
       // Reset previous messages
       message.style.display = 'none';
       message.className = 'message';
-      
+
       // Get form data
       const formData = {
         name: document.getElementById("name").value.trim(),
-        email: document.getElementById("email").value.trim(),
+        email: emailInput.value.trim(),
         password: document.getElementById("password").value.trim(),
         confirmPassword: document.getElementById("confirmPassword").value.trim(),
         license: document.getElementById("license").value.trim(),
-        phone: document.getElementById("phone").value.trim(),
+        phone: phoneInput.value.trim(),
         region: document.getElementById("region").value.trim(),
         field: document.getElementById("field").value.trim(),
-        description: document.getElementById("description").value.trim()
+        description: document.getElementById("description").value.trim(),
+        verificationCode: verificationCodeInput.value.trim(),
+        smsVerificationCode: smsVerificationCodeInput.value.trim()
       };
 
       // Validation
@@ -261,6 +304,16 @@
       if (missingFields.length > 0) {
         showMessage("يرجى ملء جميع الحقول المطلوبة", 'error');
         return;
+      }
+
+      // Check if verification codes were entered (if inputs are displayed)
+      if (verificationCodeInput.style.display !== 'none' && !formData.verificationCode) {
+          showMessage("يرجى إدخال رمز التحقق للبريد الإلكتروني", 'error');
+          return;
+      }
+      if (smsVerificationCodeInput.style.display !== 'none' && !formData.smsVerificationCode) {
+          showMessage("يرجى إدخال رمز التحقق للهاتف", 'error');
+          return;
       }
 
       if (formData.password !== formData.confirmPassword) {
@@ -305,7 +358,7 @@
           description: formData.description,
           status: 'pending', // pending, approved, rejected
           submittedAt: serverTimestamp(),
-          type: 'association_registration'
+          type: 'association_registration' // This might need to be changed to 'facility_registration' if the backend expects that
         };
 
         // Add to registration requests collection
@@ -314,10 +367,10 @@
         // Send notification to admin
         await addDoc(collection(db, "notifications"), {
           type: 'admin_notification',
-          title: 'طلب تسجيل جمعية جديد',
-          message: `تم تقديم طلب تسجيل جمعية جديدة: ${formData.name}`,
+          title: 'طلب تسجيل منشأة جديد', // Changed title
+          message: `تم تقديم طلب تسجيل منشأة جديدة: ${formData.name}`, // Changed message
           data: {
-            associationName: formData.name,
+            facilityName: formData.name, // Changed key
             email: formData.email,
             region: formData.region,
             field: formData.field
@@ -348,7 +401,7 @@
       message.textContent = text;
       message.className = `message ${type}`;
       message.style.display = 'block';
-      
+
       // Auto hide error messages after 5 seconds
       if (type === 'error') {
         setTimeout(() => {
@@ -357,7 +410,7 @@
       }
     }
 
-    console.log('صفحة تسجيل الجمعيات جاهزة');
+    console.log('صفحة تسجيل المنشآت جاهزة');
   </script>
 </body>
 </html>

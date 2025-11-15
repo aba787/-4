@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -25,9 +24,9 @@
       box-shadow: var(--shadow);
       margin-top: 20px;
     }
-    h1 { 
-      text-align: center; 
-      color: var(--primary-color); 
+    h1 {
+      text-align: center;
+      color: var(--primary-color);
       margin-bottom: 30px;
       font-size: 2rem;
       font-weight: 700;
@@ -37,22 +36,22 @@
       grid-template-columns: 1fr 1fr;
       gap: 20px;
     }
-    .form-group { 
-      margin-bottom: 25px; 
-      position: relative; 
+    .form-group {
+      margin-bottom: 25px;
+      position: relative;
     }
-    .form-group label { 
-      display: block; 
-      margin-bottom: 8px; 
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
       font-weight: 600;
       color: var(--text-dark);
       font-size: 1rem;
     }
     .form-group input, .form-group select {
-      width: 100%; 
-      padding: 15px; 
+      width: 100%;
+      padding: 15px;
       border: 2px solid #e0e0e0;
-      border-radius: 10px; 
+      border-radius: 10px;
       font-size: 16px;
       font-family: inherit;
       transition: var(--transition);
@@ -132,48 +131,48 @@
     .btn-submit:hover::before {
       left: 100%;
     }
-    .btn-submit:disabled { 
-      background: #ccc; 
-      cursor: not-allowed; 
+    .btn-submit:disabled {
+      background: #ccc;
+      cursor: not-allowed;
       transform: none;
     }
-    .btn-submit:hover:not(:disabled) { 
+    .btn-submit:hover:not(:disabled) {
       transform: translateY(-2px);
       box-shadow: 0 10px 25px rgba(46, 125, 50, 0.3);
     }
     .error, .success {
-      margin-top: 15px; 
-      text-align: center; 
-      font-size: 14px; 
+      margin-top: 15px;
+      text-align: center;
+      font-size: 14px;
       display: none;
       padding: 12px;
       border-radius: 8px;
       font-weight: 500;
     }
-    .error { 
+    .error {
       color: #f44336;
       background: #ffebee;
       border: 1px solid #ffcdd2;
     }
-    .success { 
+    .success {
       color: #2e7d32;
       background: #e8f5e9;
       border: 1px solid #c8e6c9;
     }
-    .links { 
-      text-align: center; 
-      margin-top: 25px; 
+    .links {
+      text-align: center;
+      margin-top: 25px;
     }
     .links p {
       margin: 10px 0;
     }
-    .links a { 
-      color: var(--primary-color); 
+    .links a {
+      color: var(--primary-color);
       text-decoration: none;
       font-weight: 600;
       transition: var(--transition);
     }
-    .links a:hover { 
+    .links a:hover {
       text-decoration: underline;
       color: var(--secondary-color);
     }
@@ -189,6 +188,22 @@
     .required {
       color: #f44336;
     }
+
+    .btn.btn-secondary { /* Added for the send code button */
+      padding: 12px 20px;
+      white-space: nowrap;
+      background-color: var(--secondary-color);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .btn.btn-secondary:hover {
+      background-color: #388e3c;
+    }
+
 
     @media (max-width: 768px) {
       .form-row {
@@ -227,10 +242,19 @@
       </div>
 
       <div class="form-group">
-        <label>البريد الإلكتروني <span class="required">*</span></label>
-        <input type="email" id="email" required placeholder="example@email.com" />
-        <div class="field-hint">سيتم استخدام البريد الإلكتروني لتسجيل الدخول</div>
-      </div>
+          <label>البريد الإلكتروني <span class="required">*</span></label>
+          <input type="email" id="email" required placeholder="example@email.com" />
+          <div class="field-hint">سيتم استخدام البريد الإلكتروني لتسجيل الدخول</div>
+        </div>
+
+        <div class="form-group" id="emailVerificationGroup" style="display: none;">
+          <label>رمز التحقق للبريد الإلكتروني <span class="required">*</span></label>
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <input type="text" id="emailVerificationCode" placeholder="أدخل الرمز المرسل" maxlength="6" style="flex: 1;" />
+            <button type="button" id="sendEmailCode" class="btn btn-secondary">إرسال رمز</button>
+          </div>
+          <div class="field-hint">تحقق من بريدك الإلكتروني</div>
+        </div>
 
       <div class="form-row">
         <div class="form-group">
@@ -312,9 +336,10 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getAuth, createUserWithEmailAndPassword, updateProfile, EmailAuthProvider, reauthenticateWithCredential, signInWithCredential } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
     import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+    // Dummy Firebase Config - Replace with your actual config
     const firebaseConfig = {
       apiKey: "AIzaSyALzVz48KJE596dLl7xXZbpfLsxDEHhLF0",
       authDomain: "mumkin-d4855.firebaseapp.com",
@@ -329,7 +354,11 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // Form elements
+    // --- State variables ---
+    let verificationId = null;
+    let isEmailVerified = false;
+
+    // --- DOM Elements ---
     const form = document.getElementById("registerForm");
     const errorDiv = document.getElementById("error");
     const successDiv = document.getElementById("success");
@@ -340,6 +369,14 @@
     const togglePassword = document.getElementById("togglePassword");
     const toggleConfirmPassword = document.getElementById("toggleConfirmPassword");
     const passwordStrength = document.getElementById("passwordStrength");
+
+    // Email verification elements
+    const emailInput = document.getElementById("email");
+    const emailVerificationGroup = document.getElementById("emailVerificationGroup");
+    const emailVerificationCodeInput = document.getElementById("emailVerificationCode");
+    const sendEmailCodeBtn = document.getElementById("sendEmailCode");
+
+    // --- Event Listeners ---
 
     // Toggle password visibility
     togglePassword.addEventListener("click", () => {
@@ -358,22 +395,98 @@
     passwordInput.addEventListener("input", () => {
       const password = passwordInput.value;
       const strength = checkPasswordStrength(password);
-      
+
       passwordStrength.style.display = password ? 'block' : 'none';
       passwordStrength.className = `password-strength ${strength.level}`;
       passwordStrength.textContent = strength.message;
     });
 
-    // Real-time validation
-    document.querySelectorAll('input').forEach(input => {
+    // Real-time validation for input fields
+    document.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"], input[type="password"], select').forEach(input => {
       input.addEventListener('blur', validateField);
       input.addEventListener('input', validateField);
     });
 
-    // Form submission
+    // Email input change: show/hide verification if email is valid
+    emailInput.addEventListener('input', () => {
+      validateField({ target: emailInput });
+      if (validateEmail(emailInput.value)) {
+        emailVerificationGroup.style.display = "block";
+        sendEmailCodeBtn.disabled = false;
+        isEmailVerified = false; // Reset verification status on email change
+      } else {
+        emailVerificationGroup.style.display = "none";
+        isEmailVerified = false;
+      }
+    });
+
+    // Send email verification code
+    sendEmailCodeBtn.addEventListener("click", async () => {
+      const email = emailInput.value;
+      if (!validateEmail(email)) {
+        showError("يرجى إدخال بريد إلكتروني صحيح أولاً.");
+        return;
+      }
+
+      sendEmailCodeBtn.disabled = true;
+      sendEmailCodeBtn.textContent = "جاري الإرسال...";
+
+      try {
+        // In a real application, you would send the code using a backend service or Firebase Functions.
+        // For this example, we'll simulate sending a code and assume success.
+        // You would typically use something like:
+        // await sendEmailVerification(auth.currentUser, { url: 'YOUR_CONTINUE_URL' });
+        // Or with custom tokens/verification codes if your backend handles it.
+
+        // Simulate code generation and sending
+        const generatedCode = Math.floor(100000 + Math.random() * 900000).toString();
+        console.log(`Simulated verification code for ${email}: ${generatedCode}`);
+        // Store the code temporarily (e.g., in localStorage or a variable) for verification
+        sessionStorage.setItem('emailVerificationCode', generatedCode);
+
+        showSuccess("تم إرسال رمز التحقق إلى بريدك الإلكتروني. يرجى التحقق.");
+        emailVerificationCodeInput.value = ''; // Clear previous code
+        emailVerificationCodeInput.focus();
+        emailVerificationGroup.style.display = "block"; // Ensure it's visible
+        sendEmailCodeBtn.textContent = "إعادة إرسال الرمز"; // Change button text
+        sendEmailCodeBtn.disabled = false; // Re-enable after a delay or manual click
+      } catch (error) {
+        console.error("Error sending verification code:", error);
+        showError("حدث خطأ أثناء إرسال رمز التحقق. يرجى المحاولة مرة أخرى.");
+        sendEmailCodeBtn.textContent = "إرسال رمز";
+        sendEmailCodeBtn.disabled = false;
+      }
+    });
+
+    // Verify email code on input
+    emailVerificationCodeInput.addEventListener('input', () => {
+      const enteredCode = emailVerificationCodeInput.value;
+      const storedCode = sessionStorage.getItem('emailVerificationCode');
+
+      if (enteredCode.length === 6 && enteredCode === storedCode) {
+        isEmailVerified = true;
+        emailVerificationCodeInput.classList.add('valid');
+        emailVerificationCodeInput.classList.remove('invalid');
+        successDiv.textContent = "✅ تم التحقق من البريد الإلكتروني بنجاح!";
+        successDiv.style.display = "block";
+        sendEmailCodeBtn.disabled = true; // Disable sending new codes once verified
+      } else if (enteredCode.length > 0) {
+        emailVerificationCodeInput.classList.add('invalid');
+        emailVerificationCodeInput.classList.remove('valid');
+        isEmailVerified = false;
+        successDiv.style.display = "none";
+      } else {
+        emailVerificationCodeInput.classList.remove('valid', 'invalid');
+        isEmailVerified = false;
+        successDiv.style.display = "none";
+      }
+    });
+
+
+    // Form submission handler
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
-      
+
       // Reset messages
       errorDiv.style.display = "none";
       successDiv.style.display = "none";
@@ -382,13 +495,14 @@
       const formData = {
         firstName: document.getElementById("firstName").value.trim(),
         lastName: document.getElementById("lastName").value.trim(),
-        email: document.getElementById("email").value.trim(),
+        email: emailInput.value.trim(),
         phone: document.getElementById("phone").value.trim(),
         age: document.getElementById("age").value,
         region: document.getElementById("region").value,
         gender: document.getElementById("gender").value,
         password: passwordInput.value,
-        confirmPassword: confirmPasswordInput.value
+        confirmPassword: confirmPasswordInput.value,
+        emailVerificationCode: emailVerificationCodeInput.value.trim()
       };
 
       // Validate form
@@ -398,15 +512,21 @@
         return;
       }
 
-      // Show loading
+      // Check if email is verified
+      if (!isEmailVerified) {
+        showError("يرجى التحقق من بريدك الإلكتروني أولاً.");
+        return;
+      }
+
+      // Show loading state
       setLoading(true);
 
       try {
-        // Create user account
+        // Create user account with email and password
         const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
         const user = userCredential.user;
 
-        // Update user profile
+        // Update user profile (display name)
         await updateProfile(user, {
           displayName: `${formData.firstName} ${formData.lastName}`
         });
@@ -421,10 +541,11 @@
           age: formData.age ? parseInt(formData.age) : null,
           region: formData.region,
           gender: formData.gender,
-          accountType: 'volunteer',
+          accountType: 'volunteer', // Default type, might need adjustment
           profileComplete: false,
           createdAt: serverTimestamp(),
-          lastLogin: serverTimestamp()
+          lastLogin: serverTimestamp(),
+          emailVerified: true // Mark email as verified after successful registration
         });
 
         showSuccess("✅ تم إنشاء الحساب بنجاح! جاري التوجيه لصفحة توثيق المؤهلات...");
@@ -441,17 +562,27 @@
       }
     });
 
-    // Helper functions
+    // --- Helper Functions ---
+
     function setLoading(isLoading) {
       submitBtn.disabled = isLoading;
       loadingSpinner.style.display = isLoading ? 'inline-block' : 'none';
       submitBtn.innerHTML = isLoading ? 'جاري إنشاء الحساب...' : 'إنشاء الحساب';
-      
+
       if (isLoading) {
-        const spinner = document.createElement('div');
-        spinner.className = 'loading-spinner';
-        spinner.innerHTML = '<div class="loading"></div>';
-        submitBtn.appendChild(spinner);
+        // Ensure spinner is appended only once if it was already there and removed
+        if (!submitBtn.querySelector('.loading-spinner')) {
+          const spinner = document.createElement('div');
+          spinner.className = 'loading-spinner';
+          spinner.innerHTML = '<div class="loading"></div>';
+          submitBtn.appendChild(spinner);
+        }
+      } else {
+        // Remove spinner if it exists and button text is reset
+        const existingSpinner = submitBtn.querySelector('.loading-spinner');
+        if (existingSpinner) {
+          existingSpinner.remove();
+        }
       }
     }
 
@@ -466,6 +597,7 @@
       successDiv.textContent = message;
       successDiv.style.display = "block";
       errorDiv.style.display = "none";
+      successDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
     function validateForm(data) {
@@ -477,7 +609,8 @@
         return { isValid: false, message: "يرجى إدخال بريد إلكتروني صحيح" };
       }
 
-      if (!validateSaudiPhone(data.phone)) {
+      // Only validate phone if it's not empty, as it might not be mandatory based on requirements
+      if (data.phone && !validateSaudiPhone(data.phone)) {
         return { isValid: false, message: "يرجى إدخال رقم هاتف سعودي صحيح (05XXXXXXXX)" };
       }
 
@@ -493,6 +626,11 @@
         return { isValid: false, message: "كلمات المرور غير متطابقة" };
       }
 
+      // Check email verification code if it's displayed and required
+      if (emailVerificationGroup.style.display !== 'none' && !data.emailVerificationCode) {
+        return { isValid: false, message: "يرجى إدخال رمز التحقق المرسل إلى بريدك الإلكتروني" };
+      }
+
       return { isValid: true };
     }
 
@@ -503,11 +641,13 @@
       // Remove previous validation classes
       field.classList.remove('valid', 'invalid');
 
+      // If field is empty and required, mark as invalid
       if (!value && field.required) {
         field.classList.add('invalid');
         return;
       }
 
+      // Specific validations
       if (field.type === 'email' && value) {
         field.classList.add(validateEmail(value) ? 'valid' : 'invalid');
       }
@@ -521,6 +661,13 @@
         field.classList.add(match ? 'valid' : 'invalid');
       }
 
+      if (field.id === 'emailVerificationCode' && value) {
+        const storedCode = sessionStorage.getItem('emailVerificationCode');
+        const match = value.length === 6 && value === storedCode;
+        field.classList.add(match ? 'valid' : 'invalid');
+      }
+
+      // If field has value and is required, mark as valid
       if (value && field.required) {
         field.classList.add('valid');
       }
@@ -571,6 +718,9 @@
           break;
         case 'auth/network-request-failed':
           message = "خطأ في الاتصال بالإنترنت";
+          break;
+        case 'auth/popup-blocked-by-user':
+          message = "تم حظر نافذة التحقق من قبل المستخدم.";
           break;
         default:
           message = `حدث خطأ أثناء إنشاء الحساب: ${error.message}`;

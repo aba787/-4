@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -88,28 +87,28 @@
   <!-- Statistics Section -->
   <section class="content-section" style="background: var(--light-bg);">
     <div class="section-header">
-      <h2>إنجازاتنا بالأرقام</h2>
+      <h2>إنجازاتنا</h2>
       <p>نفخر بما حققناه معاً في خدمة المجتمع</p>
     </div>
 
     <div class="dashboard-grid">
       <div class="dashboard-card">
-        <div class="number" id="volunteersCount">5,240</div>
+        <div class="number">متعدد</div>
         <h3>متطوع نشط</h3>
       </div>
 
       <div class="dashboard-card">
-        <div class="number" id="opportunitiesCount">1,850</div>
+        <div class="number">متنوع</div>
         <h3>فرصة تطوعية</h3>
       </div>
 
       <div class="dashboard-card">
-        <div class="number" id="associationsCount">120</div>
-        <h3>جمعية شريكة</h3>
+        <div class="number">مختلف</div>
+        <h3>منشأة شريكة</h3>
       </div>
 
       <div class="dashboard-card">
-        <div class="number" id="hoursCount">89,460</div>
+        <div class="number">كثير</div>
         <h3>ساعة تطوع</h3>
       </div>
     </div>
@@ -124,14 +123,14 @@
 
     <div style="text-align: center; margin-top: 40px;">
       <a href="register.html" class="btn hero-btn" style="margin-left: 20px;">إنشاء حساب متطوع</a>
-      <a href="register-association.html" class="btn hero-btn" style="background: var(--secondary-color);">تسجيل جمعية</a>
+      <a href="register-association.html" class="btn hero-btn" style="background: var(--secondary-color);">تسجيل منشأة</a>
     </div>
   </section>
 
   <!-- Main JavaScript with Firebase -->
   <script>
     console.log('🚀 بدء تحميل منصة مُمكّن...');
-    
+
     // إعدادات Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyALzVz48KJE596dLl7xXZbpfLsxDEHhLF0",
@@ -176,7 +175,7 @@
 
         // بدء التفاعلات
         initializeInteractions();
-        
+
       } catch (error) {
         console.error('خطأ في تحميل Firebase:', error);
         // المتابعة بدون Firebase
@@ -216,7 +215,10 @@
       }, observerOptions);
 
       document.querySelectorAll('.number').forEach(el => {
-        observer.observe(el);
+        // Only observe if the element contains a number that needs animation
+        if (!isNaN(parseInt(el.textContent.replace(/,/g, '')))) {
+          observer.observe(el);
+        }
       });
 
       // التمرير السلس
@@ -277,7 +279,7 @@
     // رسالة الاستعداد
     window.addEventListener('load', () => {
       console.log('🎉 منصة مُمكّن جاهزة للاستخدام!');
-      
+
       // إشعار للمطور فقط
       if (window.location.hostname.includes('replit')) {
         console.log('🔧 يعمل على Replit - جميع الميزات متاحة');
